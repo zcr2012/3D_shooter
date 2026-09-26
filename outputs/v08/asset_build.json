@@ -1,0 +1,26 @@
+{
+  "SWAT_Operator": {
+    "vertices": 10610,
+    "triangles": 19920,
+    "materials": 1
+  },
+  "AR_AssaultRifle": {
+    "vertices": 3825,
+    "triangles": 7218,
+    "materials": 1
+  },
+  "AR_Magazine": {
+    "vertices": 524,
+    "triangles": 976,
+    "materials": 1
+  },
+  "actions": [
+    "AimArmed",
+    "FireArmed",
+    "HitReact",
+    "IdleArmed",
+    "ReloadArmed",
+    "RunArmed",
+    "WalkArmed"
+  ]
+}

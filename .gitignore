@@ -1,0 +1,60 @@
+# ============ Godot 缓存 / 导入产物 ============
+.godot/
+godot_project/.godot/
+outputs/v08/godot_project/.godot/
+
+# ============ Blender 临时与自动保存 ============
+*.blend1
+*.blend2
+*.blend~
+*.blend_backup
+
+# ============ Python ============
+__pycache__/
+*.pyc
+*.pyo
+
+# ============ 工作区记忆与个人配置，不上传 ============
+.workbuddy-ai/
+mcp.json
+
+# ============ 大体积归档 ============
+*.zip
+
+# ============ 旧版本交付物（仓库只保留最新 v08） ============
+# 根目录旧工程
+swat_operator.blend
+swat_operator.blend1
+swat_production_backup_20260926.blend
+swat_v1_old.blend
+godot_project_backup_20260926/
+final_action.png
+renders/
+
+# outputs 下的 v07 交付
+/outputs/SWAT_v07_delivery.zip
+/outputs/swat_motion_v07.blend
+/outputs/swat_motion_v07.blend1
+/outputs/swat_operator_v07.glb
+/outputs/tactical_room_v07.glb
+/outputs/motion_frames/
+/outputs/motion_*.png
+/outputs/motion_*.gif
+/outputs/motion_*.jpg
+/outputs/motion_*.html
+/outputs/motion_authoring.json
+/outputs/motion_mesh_audit.json
+/outputs/rig_repair.json
+/outputs/production_motion_verification.json
+/outputs/texture_manifest.json
+/outputs/texture_pixel_audit.json
+/outputs/godot_motion_runtime.png
+/outputs/texture_sources/
+
+# outputs/v08 下的旧版对比渲染与自动备份
+/outputs/v08/*.blend1
+/outputs/v08/v07_*.png
+
+# ============ 操作系统 ============
+Thumbs.db
+.DS_Store
