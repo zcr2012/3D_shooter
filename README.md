@@ -1,6 +1,18 @@
-# SWAT 战术射击 · 3D 角色与动作包（v08）
+# SWAT 战术射击 · Sector Nine（v09）
 
-Ready or Not 写实战术风格的 3D 特警战术射击资产包。包含可绑定特警角色、突击步枪、室内战术场景与完整动作集，面向 Windows 中低端 PC 的 Godot 4 项目交付。
+以战术射击为方向的 **Godot 4 单机原型与程序化资产工程**。v09 在 v08 角色上追加细节与网格清理，并加入可重复游玩的仓库遭遇战；不是商业写实成品。
+
+**开始：** 用 Godot 4.6.3 导入 `godot_project/project.godot`，按 F5，点击 DEPLOY。
+详见 [操作、Windows/Linux 工具链与已知限制](docs/PLAY.md) 和 [本轮实际验证记录](docs/VALIDATION.md)。
+
+## v09 新增
+
+- 四名敌人的巡逻、视线检测、预警、射击、受击与清除；清场后撤离、死亡失败、结算重开。
+- 相机准星射线 + 枪口遮挡检查、血量、有限弹药、一次性补给、光迹/命中反馈及合成音效。
+- 简报与结算界面、准星、雷达、任务状态、血量/弹药/换弹进度 HUD。
+- v09 角色：头盔缝线/麦克风、面罩细节、护膝绑带、靴口与装备缝线；退化面清理。
+- `tools/project.py` 统一 Windows/Linux 运行、验证、建模和 Windows 导出；默认 Compatibility 渲染。
+- v08 交付目录和旧 `main.tscn` 验证场景保留不覆盖；实际游玩入口为 `mission.tscn`。
 
 ## 交付内容
 
@@ -20,7 +32,11 @@ Ready or Not 写实战术风格的 3D 特警战术射击资产包。包含可绑
 │   ├── scenes/main.tscn
 │   ├── scripts/             # player.gd 等运行时逻辑
 │   └── tools/               # 回归验证 / 截图脚本
-├── outputs/v08/             # 最新版资产交付
+├── outputs/v09/             # 当前源工程、网格审计与实际检查渲染
+├── tools/project.py         # 跨平台统一入口
+├── tests/                   # Python 资产/工具完整性检查
+├── docs/PLAY.md             # 操作、构建与验证边界
+├── outputs/v08/             # 保留的原始资产交付
 │   ├── swat_visual_v08.blend    # Blender 源工程
 │   ├── texture_sources/         # PBR 贴图源文件
 │   ├── godot_project/           # 隔离验证副本
@@ -33,15 +49,15 @@ Ready or Not 写实战术风格的 3D 特警战术射击资产包。包含可绑
 
 1. 安装 [Godot 4.x](https://godotengine.org/download)（本项目验证于 Godot 4.6）
 2. 用 Godot 导入 `godot_project/project.godot`
-3. 运行主场景 `scenes/main.tscn`
+3. 按 F5 运行任务场景 `scenes/mission.tscn`；`scenes/main.tscn` 仅作旧动作回归夹具。
 
-操控：WASD 移动（方向跟随摄像机朝向）、鼠标瞄准、左键射击、R 换弹、Shift 跑动。
+操控：WASD 移动、鼠标转视角、右键瞄准、左键单发、R 换弹、Shift 跑动、E 补给、Space 物理跳跃、Esc 释放鼠标。
 
 ## 质量控制
 
-- 374 项无头回归（动作时长 / 循环接缝 / 16 向 WSD 位移 / 分层动作 / 弹匣逻辑 / 鼠标捕获）
+- 旧动作套件：动作时长 / 循环接缝 / 16 组 WASD 位移 / 分层动作 / 弹药逻辑 / 鼠标捕获。另增 `verify_gameplay.gd` 玩法回归。本轮重新运行：旧套件 374/374、新玩法 31/31 通过；报告保存在 `outputs/v09/`。
 - 逐帧网格审计：权重归一化误差 < 1e-7、无无效顶点、鞋底离地 < 3mm、刚性装备应变 < 0.3%
-- 三角形预算：角色 ≈ 20k、步枪 ≈ 7k、弹匣 ≈ 1k，适配中低端集显
+- v09 三角形总数：29,842（角色 21,776、步枪 7,090、弹匣 976）；具体统计见 `outputs/v09/visual_audit.json`。目标硬件性能尚未验收。
 
 ## 技术栈
 

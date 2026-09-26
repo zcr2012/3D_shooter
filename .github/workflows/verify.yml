@@ -1,0 +1,47 @@
+name: Godot regression
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned Godot 4.6.3
+        shell: python
+        run: |
+          import hashlib, os, pathlib, stat, sys, urllib.request, zipfile
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'godot'
+          root.mkdir(exist_ok=True)
+          suffix = 'win64.exe' if sys.platform == 'win32' else 'linux.x86_64'
+          asset = f'Godot_v4.6.3-stable_{suffix}.zip'
+          base = 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/'
+          archive = root / asset
+          urllib.request.urlretrieve(base + asset, archive)
+          sums = urllib.request.urlopen(base + 'SHA512-SUMS.txt').read().decode()
+          expected = next(line.split()[0] for line in sums.splitlines() if line.rstrip().endswith(asset))
+          assert hashlib.sha512(archive.read_bytes()).hexdigest() == expected
+          with zipfile.ZipFile(archive) as z: z.extractall(root)
+          executable = root / f'Godot_v4.6.3-stable_{suffix}'
+          executable.chmod(executable.stat().st_mode | stat.S_IXUSR)
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f'GODOT_BIN={executable}\n')
+      - name: Integrity tests
+        run: python -m unittest discover -s tests -v
+      - name: Import and headless regression
+        run: python tools/project.py verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-${{ matrix.os }}
+          path: |
+            outputs/production_motion_verification.json
+            outputs/v09/gameplay_verification.json

@@ -58,3 +58,8 @@ renders/
 # ============ 操作系统 ============
 Thumbs.db
 .DS_Store
+
+# Local exports / tools (never commit installed engines or runtime caches)
+/build/
+/.tools/
+/outputs/v09/*.log
