@@ -1,0 +1,141 @@
+{
+	"checks": [
+		{
+			"id": "briefing.blocks_controls",
+			"passed": true
+		},
+		{
+			"id": "briefing.blocks_direct_fire",
+			"passed": true
+		},
+		{
+			"id": "mission.four_contacts",
+			"passed": true
+		},
+		{
+			"id": "deployment.enables_controls_and_ai",
+			"passed": true
+		},
+		{
+			"id": "hitscan.applies_damage",
+			"passed": true
+		},
+		{
+			"id": "hitscan.emits_confirmed_hit",
+			"passed": true
+		},
+		{
+			"id": "hitscan.cover_blocks_damage",
+			"passed": true
+		},
+		{
+			"id": "ai.cover_blocks_los",
+			"passed": true
+		},
+		{
+			"id": "ai.clear_los_acquires_player",
+			"passed": true
+		},
+		{
+			"id": "camera.peek_fixture_sees_enemy",
+			"passed": true
+		},
+		{
+			"id": "muzzle.clearance_prevents_cover_exploit",
+			"passed": true
+		},
+		{
+			"id": "enemy.three_hits_eliminate",
+			"passed": true
+		},
+		{
+			"id": "objective.counted_once",
+			"passed": true
+		},
+		{
+			"id": "enemy.dead_ignores_repeat_damage",
+			"passed": true
+		},
+		{
+			"id": "enemy.dead_collision_disabled",
+			"passed": true
+		},
+		{
+			"id": "weapon.one_round_per_action",
+			"passed": true
+		},
+		{
+			"id": "reload.starts",
+			"passed": true
+		},
+		{
+			"id": "damage.interrupts_reload_without_refill",
+			"passed": true
+		},
+		{
+			"id": "damage.grace_period",
+			"passed": true
+		},
+		{
+			"id": "supply.rejects_remote_use",
+			"passed": true
+		},
+		{
+			"id": "supply.collects_once",
+			"passed": true
+		},
+		{
+			"id": "supply.no_duplicates",
+			"passed": true
+		},
+		{
+			"id": "objective.cannot_extract_early",
+			"passed": true
+		},
+		{
+			"id": "objective.clear_then_extract_wins",
+			"passed": true
+		},
+		{
+			"id": "victory.freezes_controls",
+			"passed": true
+		},
+		{
+			"id": "victory.cannot_fire",
+			"passed": true
+		},
+		{
+			"id": "restart.fresh_state",
+			"passed": true
+		},
+		{
+			"id": "ai.acquisition_delay_gives_warning",
+			"passed": true
+		},
+		{
+			"id": "ai.autonomous_shot_damages_player",
+			"passed": true
+		},
+		{
+			"id": "death.ends_mission",
+			"passed": true
+		},
+		{
+			"id": "death.disables_all_ai",
+			"passed": true
+		}
+	],
+	"engine": {
+		"build": "custom_build",
+		"hash": "unknown",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (custom_build)",
+		"timestamp": 0
+	},
+	"failure_count": 0,
+	"status": "PASS"
+}

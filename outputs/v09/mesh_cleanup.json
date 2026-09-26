@@ -1,0 +1,31 @@
+{
+  "source": "outputs/v08/swat_visual_v08.blend",
+  "assets": {
+    "SWAT_Operator": {
+      "faces_before_cleanup": 10346,
+      "faces_after_cleanup": 10266,
+      "degenerate_faces": 0,
+      "boundary_edges": 60,
+      "triangles": 21776
+    },
+    "AR_AssaultRifle": {
+      "faces_before_cleanup": 3461,
+      "faces_after_cleanup": 3397,
+      "degenerate_faces": 0,
+      "boundary_edges": 48,
+      "triangles": 7090
+    },
+    "AR_Magazine": {
+      "faces_before_cleanup": 478,
+      "faces_after_cleanup": 478,
+      "degenerate_faces": 0,
+      "boundary_edges": 0,
+      "triangles": 976
+    }
+  },
+  "limitations": [
+    "Incremental procedural polish, not a photorealistic character rebuild.",
+    "Open text/detail boundaries are retained; not a watertight printing mesh.",
+    "Fixed grip fingers; no slope IK or collision certification for blended poses."
+  ]
+}

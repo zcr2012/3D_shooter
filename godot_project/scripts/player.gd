@@ -1,7 +1,17 @@
 extends CharacterBody3D
 ## Camera-relative prototype controller. Lower-body locomotion and upper-body
 ## actions own disjoint animation tracks: reloading/firing never freezes legs.
-## No damage, projectile, networking or jump animation is implemented here.
+## Combat is opt-in: the mission scene enables it; the animation fixture stays isolated.
+
+signal shot_fired(origin: Vector3, target: Vector3, hit: bool)
+signal damaged(health: int)
+signal died
+
+@export var combat_enabled: bool = false
+@export var max_health: int = 100
+var health: int = 100
+var controls_enabled: bool = true
+var _hurt_cooldown: float = 0.0
 
 @export var walk_speed: float = 1.8
 @export var sprint_speed: float = 3.5
@@ -80,6 +90,10 @@ var horizontal_speed: float:
 		return _planar_speed
 
 func _ready() -> void:
+	max_health = maxi(max_health, 1)
+	health = max_health
+	add_to_group("player")
+	arm.add_excluded_object(get_rid())
 	max_ammo = maxi(max_ammo, 1)
 	_ammo = clampi(starting_ammo, 0, max_ammo)
 	_reserve_ammo = maxi(starting_reserve_ammo, 0)
@@ -160,6 +174,8 @@ func _notification(what: int) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not controls_enabled:
+		return
 	if event is InputEventMouseMotion and _look_enabled:
 		_yaw -= event.relative.x * mouse_sensitivity
 		_pitch -= event.relative.y * mouse_sensitivity
@@ -172,9 +188,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _physics_process(delta: float) -> void:
+	_hurt_cooldown = maxf(0.0, _hurt_cooldown - delta)
+	if not controls_enabled:
+		return
+	if combat_enabled:
+		var ads := _look_enabled and Input.is_action_pressed("aim")
+		cam.fov = lerpf(cam.fov, 55.0 if ads else 72.0, 1.0 - exp(-12.0 * delta))
 	if not is_on_floor():
 		_velocity_y -= gravity * delta
-	elif Input.is_action_just_pressed("ui_accept"):
+	elif Input.is_action_just_pressed("jump"):
 		_velocity_y = jump_velocity
 	else:
 		_velocity_y = 0.0
@@ -196,7 +218,9 @@ func _physics_process(delta: float) -> void:
 	# Collision-resolved horizontal travel, rather than desired input speed.
 	var actual_velocity := get_real_velocity()
 	_planar_speed = Vector2(actual_velocity.x, actual_velocity.z).length()
-	if dir.length_squared() > 0.01:
+	if combat_enabled and _look_enabled and (Input.is_action_pressed("aim") or Input.is_action_pressed("fire")):
+		model.rotation.y = lerp_angle(model.rotation.y, 0.0, 1.0 - exp(-18.0 * delta))
+	elif dir.length_squared() > 0.01:
 		var want_world := atan2(-dir.x, -dir.z)
 		var want_local := wrapf(want_world - rotation.y, -PI, PI)
 		model.rotation.y = lerp_angle(model.rotation.y, want_local, 1.0 - exp(-10.0 * delta))
@@ -216,13 +240,15 @@ func _handle_input_actions() -> void:
 		_start_fire()
 
 func _start_fire() -> void:
-	if _action_locked or _reload_started or _ammo <= 0:
+	if not controls_enabled or _action_locked or _reload_started or _ammo <= 0:
 		return
 	_ammo -= 1
 	_start_one_shot(FIRE_CLIP)
+	if combat_enabled:
+		_fire_hitscan()
 
 func _start_reload() -> void:
-	if _action_locked or _reload_started or _ammo >= max_ammo or _reserve_ammo <= 0:
+	if not controls_enabled or _action_locked or _reload_started or _ammo >= max_ammo or _reserve_ammo <= 0:
 		return
 	# A missing reload clip must never grant ammunition or create a fake reload.
 	if not _has_animation(RELOAD_CLIP):
@@ -340,3 +366,57 @@ func _update_animation(delta: float, wants_sprint: bool) -> void:
 		var deadline := _action_duration + (0.0 if _missing_action_clip else 0.2)
 		if _action_elapsed >= deadline:
 			_on_animation_finished(StringName(_action_state))
+
+
+func _fire_hitscan() -> void:
+	# Camera chooses the reticle point; a second ray from the weapon prevents
+	# shooting through cover when a third-person camera can peek around it.
+	var eye := cam.global_position
+	var aim_end := eye - cam.global_basis.z * 80.0
+	var camera_query := PhysicsRayQueryParameters3D.create(eye, aim_end, 1 | 4, [get_rid()])
+	var camera_hit := get_world_3d().direct_space_state.intersect_ray(camera_query)
+	if not camera_hit.is_empty():
+		aim_end = camera_hit.position
+	var chest := global_position + Vector3(0, 1.25, 0)
+	var muzzle := chest - global_basis.z * 0.42
+	var clearance := PhysicsRayQueryParameters3D.create(chest, muzzle, 1, [get_rid()])
+	var blocked := get_world_3d().direct_space_state.intersect_ray(clearance)
+	if not blocked.is_empty():
+		fire_at(chest, blocked.position)
+	else:
+		fire_at(muzzle, aim_end)
+
+func fire_at(origin: Vector3, target: Vector3) -> void:
+	if not combat_enabled or not controls_enabled:
+		return
+	# Shared resolution path also used by the headless occlusion regression.
+	var direction := (target - origin).normalized()
+	var query := PhysicsRayQueryParameters3D.create(origin, target + direction * 0.1, 1 | 4, [get_rid()])
+	var result := get_world_3d().direct_space_state.intersect_ray(query)
+	var end := target
+	var confirmed := false
+	if not result.is_empty():
+		end = result.position
+		var collider: Object = result.collider
+		if collider.has_method("take_damage"):
+			confirmed = bool(collider.call("take_damage", 34))
+	shot_fired.emit(origin, end, confirmed)
+
+func take_damage(amount: int) -> void:
+	if not combat_enabled or not controls_enabled or health <= 0 or amount <= 0 or _hurt_cooldown > 0.0:
+		return
+	_hurt_cooldown = 0.5
+	health = maxi(0, health - amount)
+	damaged.emit(health)
+	if health == 0:
+		stop_combat()
+		died.emit()
+	else:
+		receive_hit()
+
+func stop_combat() -> void:
+	if _reload_started:
+		_finish_reload(true)
+	controls_enabled = false
+	velocity = Vector3.ZERO
+	_set_look(false)

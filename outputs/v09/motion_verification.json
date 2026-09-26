@@ -1,0 +1,3268 @@
+{
+	"checks": [
+		{
+			"details": {
+
+			},
+			"id": "scene.load",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "scene.player",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "scene.animation_source",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "scene.animation_player",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "scene.skeleton",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.method._start_fire",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.method._start_reload",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.method.receive_hit",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.method._set_look",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.method._unhandled_input",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.ammo",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.reserve_ammo",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.is_reloading",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.current_action",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.max_ammo",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property._yaw",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property._pitch",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property._velocity_y",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.locomotion_state",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.action_locked",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "api.property.horizontal_speed",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.move_forward",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.move_back",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.move_left",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.move_right",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.sprint",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.aim",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.fire",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "input.mapping.reload",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.IdleArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 3.0,
+				"expected": 3.0,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.IdleArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.IdleArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.IdleArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.IdleArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.IdleArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.IdleArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.IdleArmed.track.0.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.IdleArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.1.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.IdleArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:spine",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.2.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.IdleArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:chest",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.3.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.IdleArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:neck",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.4.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.IdleArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:head",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.5.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 13,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.IdleArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.6.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 18,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.IdleArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.7.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.IdleArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.8.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.IdleArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.9.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 27,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.IdleArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.10.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 32,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.IdleArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.11.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.IdleArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.IdleArmed.track.12.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.IdleArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.13.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.IdleArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.IdleArmed.track.14.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.IdleArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.15.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 15,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.IdleArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.16.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.IdleArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.17.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.IdleArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.18.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 16,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.IdleArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.19.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.IdleArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.IdleArmed.track.20.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.IdleArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.WalkArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 1.20000004768372,
+				"expected": 1.2,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.WalkArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.WalkArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.WalkArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.WalkArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.WalkArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 34,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.WalkArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.WalkArmed.track.0.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 33,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.WalkArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.1.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.WalkArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 1.20000004768372,
+				"path": "SWAT_Rig/Skeleton3D:spine",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.2.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.WalkArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 1.20000004768372,
+				"path": "SWAT_Rig/Skeleton3D:chest",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.3.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.WalkArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 1.20000004768372,
+				"path": "SWAT_Rig/Skeleton3D:neck",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.4.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.WalkArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 1.20000004768372,
+				"path": "SWAT_Rig/Skeleton3D:head",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.5.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 33,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.WalkArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.6.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 33,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.WalkArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.7.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 28,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.WalkArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.8.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 32,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.WalkArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.9.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 35,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.WalkArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.10.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 35,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.WalkArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.11.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 26,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.WalkArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.WalkArmed.track.12.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 32,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.WalkArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.13.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.WalkArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 1.20000004768372,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.WalkArmed.track.14.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.WalkArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.15.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.WalkArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.16.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.WalkArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.17.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.WalkArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.18.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.WalkArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.19.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.WalkArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.WalkArmed.track.20.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.WalkArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.RunArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 0.800000011920929,
+				"expected": 0.8,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.RunArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.RunArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.RunArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.RunArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.RunArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 22,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.RunArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.RunArmed.track.0.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.RunArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.1.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.RunArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.800000011920929,
+				"path": "SWAT_Rig/Skeleton3D:spine",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.2.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.RunArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.800000011920929,
+				"path": "SWAT_Rig/Skeleton3D:chest",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.3.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.RunArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.800000011920929,
+				"path": "SWAT_Rig/Skeleton3D:neck",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.4.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.RunArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.800000011920929,
+				"path": "SWAT_Rig/Skeleton3D:head",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.5.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.RunArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.6.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.RunArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.7.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.RunArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.8.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.RunArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.9.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.RunArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.10.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 23,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.RunArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.11.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 22,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.RunArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.RunArmed.track.12.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 22,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.RunArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.13.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.RunArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.800000011920929,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.RunArmed.track.14.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.RunArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.15.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.RunArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.16.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.RunArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.17.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.RunArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.18.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.RunArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.19.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 25,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.RunArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.RunArmed.track.20.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.RunArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.AimArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 3.0,
+				"expected": 3.0,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.AimArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.AimArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.AimArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.AimArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.AimArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.AimArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.AimArmed.track.0.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.AimArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:hip",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.1.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.AimArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:spine",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.2.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.AimArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:chest",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.3.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.AimArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:neck",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.4.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.AimArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:head",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.5.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 13,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.AimArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.6.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 18,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.AimArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.7.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.AimArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.8.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.AimArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.9.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 36,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.AimArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.10.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 32,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.AimArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:hand.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.11.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.AimArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.AimArmed.track.12.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.AimArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.13.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.AimArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 3.0,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag",
+				"tolerance": 0.002,
+				"unit": "metres"
+			},
+			"id": "clip.AimArmed.track.14.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.AimArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.15.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 15,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.AimArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.16.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.AimArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.L",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.17.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.AimArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.18.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 16,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.AimArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:shin.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.19.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.AimArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"gap": 0.0,
+				"missing_end_seconds": 0.0,
+				"path": "SWAT_Rig/Skeleton3D:foot.R",
+				"tolerance": 0.00872664625997165,
+				"unit": "radians"
+			},
+			"id": "clip.AimArmed.track.20.loop_seam",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.AimArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.FireArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 0.266666680574417,
+				"expected": 0.267,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.FireArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.FireArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.FireArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.FireArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.FireArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.FireArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.FireArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.FireArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.FireArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.FireArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.FireArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.FireArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.FireArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 8,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.FireArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.FireArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.FireArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.FireArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 8,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.FireArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.FireArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.FireArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 7,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.FireArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 7,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.FireArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.FireArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.FireArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 7,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.FireArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 7,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.FireArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.FireArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.ReloadArmed.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 2.79999995231628,
+				"expected": 2.8,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.ReloadArmed.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.ReloadArmed.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.ReloadArmed.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.ReloadArmed.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.ReloadArmed.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 6,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.ReloadArmed.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.ReloadArmed.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.ReloadArmed.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.ReloadArmed.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.ReloadArmed.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.ReloadArmed.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 76,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.ReloadArmed.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 77,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.ReloadArmed.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 74,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.ReloadArmed.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 38,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.ReloadArmed.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.ReloadArmed.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 39,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.ReloadArmed.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 33,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.ReloadArmed.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 31,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.ReloadArmed.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 37,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.ReloadArmed.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.ReloadArmed.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 18,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.ReloadArmed.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.ReloadArmed.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.ReloadArmed.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 16,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.ReloadArmed.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 11,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.ReloadArmed.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.ReloadArmed.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"AimArmed",
+					"FireArmed",
+					"HitReact",
+					"IdleArmed",
+					"ReloadArmed",
+					"RunArmed",
+					"WalkArmed"
+				]
+			},
+			"id": "clip.HitReact.exists",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual": 0.666666686534882,
+				"expected": 0.667,
+				"tolerance": 0.0353333333333333
+			},
+			"id": "clip.HitReact.duration",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.HitReact.LowerLocomotionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.HitReact.LowerLocomotionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.HitReact.UpperActionPlayer.runtime_exists",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "clip.HitReact.UpperActionPlayer.loop_mode",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.HitReact.track.0.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:hip"
+			},
+			"id": "clip.HitReact.track.1.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:spine"
+			},
+			"id": "clip.HitReact.track.2.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:chest"
+			},
+			"id": "clip.HitReact.track.3.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:neck"
+			},
+			"id": "clip.HitReact.track.4.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 16,
+				"path": "SWAT_Rig/Skeleton3D:head"
+			},
+			"id": "clip.HitReact.track.5.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.L"
+			},
+			"id": "clip.HitReact.track.6.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:forearm.L"
+			},
+			"id": "clip.HitReact.track.7.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:hand.L"
+			},
+			"id": "clip.HitReact.track.8.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 21,
+				"path": "SWAT_Rig/Skeleton3D:upperarm.R"
+			},
+			"id": "clip.HitReact.track.9.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:forearm.R"
+			},
+			"id": "clip.HitReact.track.10.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:hand.R"
+			},
+			"id": "clip.HitReact.track.11.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 20,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.HitReact.track.12.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 18,
+				"path": "SWAT_Rig/Skeleton3D:weapon_root"
+			},
+			"id": "clip.HitReact.track.13.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 1,
+				"path": "SWAT_Rig/Skeleton3D:weapon_mag"
+			},
+			"id": "clip.HitReact.track.14.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.L"
+			},
+			"id": "clip.HitReact.track.15.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 14,
+				"path": "SWAT_Rig/Skeleton3D:shin.L"
+			},
+			"id": "clip.HitReact.track.16.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:foot.L"
+			},
+			"id": "clip.HitReact.track.17.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 9,
+				"path": "SWAT_Rig/Skeleton3D:thigh.R"
+			},
+			"id": "clip.HitReact.track.18.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 17,
+				"path": "SWAT_Rig/Skeleton3D:shin.R"
+			},
+			"id": "clip.HitReact.track.19.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"keys": 8,
+				"path": "SWAT_Rig/Skeleton3D:foot.R"
+			},
+			"id": "clip.HitReact.track.20.valid",
+			"passed": true
+		},
+		{
+			"details": {
+				"bone_tracks": 21,
+				"rotation_tracks": 18
+			},
+			"id": "clip.HitReact.bone_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "layers.import_source_inactive",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.IdleArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.WalkArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.RunArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.AimArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.FireArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.ReloadArmed.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"overlap": []
+			},
+			"id": "layers.HitReact.disjoint_tracks",
+			"passed": true
+		},
+		{
+			"details": {
+				"y": 0.000277779996395111
+			},
+			"id": "ground.main_scene_landed",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "ground.main_scene_stable",
+			"passed": true
+		},
+		{
+			"details": {
+				"y": 0.000131040811538696
+			},
+			"id": "ground.fixture_landed",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "ground.fixture_stable",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(0.0, 0.0, -1.0)",
+				"world_displacement": "(0.0, 0.0, -0.600464)"
+			},
+			"id": "movement.yaw_0.move_forward",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(0.0, 0.0, 1.0)",
+				"world_displacement": "(0.0, 0.0, 0.600464)"
+			},
+			"id": "movement.yaw_0.move_back",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-1.0, 0.0, 0.0)",
+				"world_displacement": "(-0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_0.move_left",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(1.0, 0.0, 0.0)",
+				"world_displacement": "(0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_0.move_right",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-1.0, 0.0, 0.0)",
+				"world_displacement": "(-0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_90.move_forward",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(1.0, 0.0, -0.0)",
+				"world_displacement": "(0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_90.move_back",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(0.0, 0.0, 1.0)",
+				"world_displacement": "(0.0, 0.0, 0.600464)"
+			},
+			"id": "movement.yaw_90.move_left",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-0.0, 0.0, -1.0)",
+				"world_displacement": "(0.0, 0.0, -0.600464)"
+			},
+			"id": "movement.yaw_90.move_right",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(0.0, 0.0, 1.0)",
+				"world_displacement": "(0.0, 0.0, 0.600464)"
+			},
+			"id": "movement.yaw_180.move_forward",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-0.0, 0.0, -1.0)",
+				"world_displacement": "(0.0, 0.0, -0.600464)"
+			},
+			"id": "movement.yaw_180.move_back",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(1.0, 0.0, -0.0)",
+				"world_displacement": "(0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_180.move_left",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-1.0, 0.0, 0.0)",
+				"world_displacement": "(-0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_180.move_right",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(1.0, 0.0, -0.0)",
+				"world_displacement": "(0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_270.move_forward",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-1.0, 0.0, 0.0)",
+				"world_displacement": "(-0.600464, 0.0, 0.0)"
+			},
+			"id": "movement.yaw_270.move_back",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(-0.0, 0.0, -1.0)",
+				"world_displacement": "(0.0, 0.0, -0.600464)"
+			},
+			"id": "movement.yaw_270.move_left",
+			"passed": true
+		},
+		{
+			"details": {
+				"direction_dot": 1.0,
+				"distance": 0.6004638671875,
+				"expected": "(0.0, 0.0, 1.0)",
+				"world_displacement": "(0.0, 0.0, 0.600464)"
+			},
+			"id": "movement.yaw_270.move_right",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "animation.walk_selected",
+			"passed": true
+		},
+		{
+			"details": {
+				"max_bone_radians": 0.724684158672973,
+				"speed_scale": 1.80175769329071
+			},
+			"id": "animation.movement_changes_bones",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "animation.run_selected",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "animation.stop_returns_idle",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "animation.aim_selected",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.fixture_ammunition",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.fire_consumes_one",
+			"passed": true
+		},
+		{
+			"details": {
+				"finishes": 1,
+				"max_position": 0.25,
+				"position_regressions": 0,
+				"samples": 15,
+				"starts": 1
+			},
+			"id": "oneshot.FireArmed.progress_and_single_completion",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.fire_no_extra_consumption",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.reload_started",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.reload_blocks_fire",
+			"passed": true
+		},
+		{
+			"details": {
+				"finishes": 1,
+				"max_position": 2.78333333333333,
+				"position_regressions": 0,
+				"samples": 167,
+				"starts": 1
+			},
+			"id": "oneshot.ReloadArmed.progress_and_single_completion",
+			"passed": true
+		},
+		{
+			"details": {
+				"ammo": 30,
+				"expected_transfer": 1,
+				"reserve_ammo": 89
+			},
+			"id": "combat.reload_transfers_once",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.reload_remains_completed",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.interrupt_precondition",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.hit_cancels_reload",
+			"passed": true
+		},
+		{
+			"details": {
+				"finishes": 1,
+				"max_position": 0.65,
+				"position_regressions": 0,
+				"samples": 39,
+				"starts": 1
+			},
+			"id": "oneshot.HitReact.progress_and_single_completion",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.cancelled_reload_never_refills",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "combat.returns_to_idle",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "layers.leg_sample_bone",
+			"passed": true
+		},
+		{
+			"details": {
+				"leg_radians": 0.560116316403278,
+				"lower_clip": "WalkArmed",
+				"upper_clip": "ReloadArmed"
+			},
+			"id": "layers.moving_reload_keeps_legs_animating",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "layers.hit_rejects_reload_and_repeated_hit",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "layers.hit_preserves_ammo",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "airborne.independent_locomotion",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "airborne.pose_held_but_movement_continues",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "airborne.lands_and_recovers_idle",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "fallback.reload_precondition",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "missing_clip.reload_rejected_without_lock",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "missing_clip.no_delayed_refill",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "mouse.look_disabled_does_not_fire",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "mouse.first_click_only_recaptures",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "mouse.subsequent_click_fires_once",
+			"passed": true
+		},
+		{
+			"details": {
+				"pitch_delta": -0.03,
+				"yaw_delta": -0.2
+			},
+			"id": "mouse.capture_failure_still_updates_angles",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "mouse.angles_applied_to_camera_rig",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"id": "mouse.capture_failure_input_delivery",
+			"passed": true
+		},
+		{
+			"details": {
+				"error": 0,
+				"path": "/home/user/3D_shooter/outputs"
+			},
+			"id": "report.directory",
+			"passed": true
+		},
+		{
+			"details": {
+				"error": 0,
+				"path": "/home/user/3D_shooter/outputs/production_motion_verification.json"
+			},
+			"id": "report.writable",
+			"passed": true
+		}
+	],
+	"duration_seconds": 38.873,
+	"engine": {
+		"build": "custom_build",
+		"hash": "unknown",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (custom_build)",
+		"timestamp": 0
+	},
+	"failure_count": 0,
+	"loop_tolerance": "One missing 30fps frame; local endpoint velocity allowance, capped at 0.08m / 12deg.",
+	"scope": "Functional regression only. Headless timing is not graphical performance evidence.",
+	"status": "PASS",
+	"suite": "production_motion",
+	"timestamp_utc": "2026-09-26T14:38:59"
+}
