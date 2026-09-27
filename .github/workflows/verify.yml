@@ -4,6 +4,7 @@ env:
   PYTHONUTF8: '1'
 permissions:
   contents: read
+  checks: write
 jobs:
   verify:
     strategy:
@@ -59,16 +60,38 @@ jobs:
             outputs/zh_chapter/verification.json
             outputs/release/session_verification.json
       - name: Render actual game frames with Mesa
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y xvfb libgl1-mesa-dri
-          LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a "$GODOT_BIN" --path godot_project --rendering-method gl_compatibility --audio-driver Dummy --script tools/capture_chapter.gd
+          LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x720x24" "$GODOT_BIN" --path godot_project --rendering-method gl_compatibility --audio-driver Dummy --script tools/capture_chapter.gd 2>&1 | tee capture.log
+          grep -q "CAPTURE: 11 frames" capture.log
+          if grep -q "SCRIPT ERROR" capture.log; then echo "::error title=capture::$(grep -A2 'SCRIPT ERROR' capture.log | head -20 | tr '\n' ' ')"; exit 1; fi
       - uses: actions/upload-artifact@v4
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         with:
           name: chapter-rendered-screenshots
-          path: outputs/release/screenshots/*.png
+          path: |
+            outputs/release/screenshots/*.png
+            outputs/release/screenshots/index.json
+      - name: Publish JPEG previews as check runs (readable through the Checks API)
+        if: runner.os == 'Linux' && github.event_name == 'push' && !cancelled()
+        shell: python
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          import base64, json, os, pathlib, urllib.request
+          repo, sha = os.environ['GITHUB_REPOSITORY'], os.environ['GITHUB_SHA']
+          for jpg in sorted(pathlib.Path('outputs/release/screenshots').glob('*.jpg')):
+              data = base64.b64encode(jpg.read_bytes()).decode()
+              if len(data) > 130000:
+                  print('::warning::preview too large', jpg.name, len(data))
+                  continue
+              body = {'name': 'preview/' + jpg.stem, 'head_sha': sha, 'status': 'completed', 'conclusion': 'neutral',
+                      'output': {'title': 'CI rendered preview ' + jpg.stem, 'summary': data[:65000], 'text': data[65000:] or ' '}}
+              request = urllib.request.Request(f'https://api.github.com/repos/{repo}/check-runs', data=json.dumps(body).encode(), method='POST',
+                                               headers={'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Accept': 'application/vnd.github+json'})
+              print(jpg.name, urllib.request.urlopen(request).status, len(data))
       - name: Install verified official export templates and export Windows build
         if: runner.os == 'Windows'
         shell: python
@@ -97,6 +120,18 @@ jobs:
           shutil.copy2('godot_project/assets/audio/sfx/manifest.json', destination / 'licenses/sfx-manifest.json')
           exe = destination / 'SectorNine.exe'
           (destination / 'SHA256.txt').write_text(hashlib.sha256(exe.read_bytes()).hexdigest() + '  SectorNine.exe\n')
+          # Smoke-launch the exported build: the packed scripts must compile and the main scene must load.
+          console = destination / 'SectorNine.console.exe'
+          launcher = console if console.exists() else exe
+          result = subprocess.run([str(launcher), '--headless', '--audio-driver', 'Dummy', '--quit-after', '400'], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=180)
+          output = result.stdout + result.stderr
+          print(output)
+          size = exe.stat().st_size / 1048576
+          bad = [line for line in output.splitlines() if 'SCRIPT ERROR' in line or line.startswith('ERROR')]
+          if result.returncode != 0 or bad:
+              print('::error title=exported-build::' + ' | '.join(bad[:8]) + f' (exit {result.returncode})')
+              raise SystemExit(1)
+          print(f'::notice title=exported-build::SectorNine.exe {size:.1f} MB launched headless, exit 0, no script errors')
       - uses: actions/upload-artifact@v4
         if: runner.os == 'Windows'
         with:

@@ -8,11 +8,19 @@ var preferences: Dictionary = DEFAULTS.duplicate()
 var last_error := ""
 
 func initialize() -> void:
+	last_error = ""
+	checkpoint = {}
+	preferences = DEFAULTS.duplicate()
 	if not persistent:
 		return
 	var settings := _read_valid(directory+"settings.json",false)
 	if not settings.is_empty():
-		preferences = settings["values"]
+		# Merge over defaults so a future setting never leaves a missing key.
+		for key in settings["values"]:
+			if DEFAULTS.has(key):
+				preferences[key] = settings["values"][key]
+	# Settings problems are cosmetic; a checkpoint message is more important.
+	last_error = ""
 	checkpoint = _read_valid(directory+"checkpoint.json",true)
 
 func _number(value: Variant, minimum: float, maximum: float) -> bool:
@@ -52,23 +60,43 @@ func valid_settings(data: Variant) -> bool:
 			return false
 	return _number(p.get("sensitivity"),.0005,.01) and _number(p.get("master"),0,1) and _number(p.get("voice"),0,1) and _number(p.get("subtitle_size"),14,24)
 
+func _parse_file(path: String) -> Variant:
+	if not FileAccess.file_exists(path):
+		return null
+	var file := FileAccess.open(path,FileAccess.READ)
+	if file == null or file.get_length() > 65536:
+		return null
+	var text := file.get_as_text()
+	file.close()
+	# JSON.parse_string() logs an engine error for damaged files; an instance parse only reports.
+	var json := JSON.new()
+	if json.parse(text) != OK:
+		return null
+	return json.data
+
+func _is_valid(data: Variant, is_checkpoint: bool) -> bool:
+	return valid_checkpoint(data) if is_checkpoint else valid_settings(data)
+
 func _read_valid(path: String, is_checkpoint: bool) -> Dictionary:
-	for candidate in [path,path+".bak"]:
+	var damaged := false
+	for candidate: String in [path,path+".bak"]:
 		if not FileAccess.file_exists(candidate):
 			continue
-		var file := FileAccess.open(candidate,FileAccess.READ)
-		if file == null or file.get_length() > 65536:
-			continue
-		var data: Variant = JSON.parse_string(file.get_as_text())
-		file.close()
-		if valid_checkpoint(data) if is_checkpoint else valid_settings(data):
-			if candidate.ends_with(".bak"):
+		var data: Variant = _parse_file(candidate)
+		if _is_valid(data,is_checkpoint):
+			if damaged or candidate.ends_with(".bak"):
 				last_error = "主存档不可用，已读取上一个有效备份。"
 			return data
+		damaged = true
+	if damaged:
 		last_error = "存档损坏或版本不兼容，可以开始新行动。"
 	return {}
 
-func _atomic_write(path: String, data: Dictionary) -> bool:
+func _remove(path: String) -> void:
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+func _atomic_write(path: String, data: Dictionary, is_checkpoint: bool) -> bool:
 	if not persistent:
 		return true
 	last_error = ""
@@ -82,18 +110,25 @@ func _atomic_write(path: String, data: Dictionary) -> bool:
 	file.flush()
 	var error := file.get_error()
 	file.close()
-	if error != OK:
+	# Read back before touching the live file: a short write must never replace a good save.
+	if error != OK or not _is_valid(_parse_file(path+".tmp"),is_checkpoint):
+		_remove(path+".tmp")
 		last_error = "存档写入失败，旧检查点未被替换。"
 		return false
 	if FileAccess.file_exists(path):
-		if FileAccess.file_exists(path+".bak"):
-			DirAccess.remove_absolute(absolute+".bak")
-		if DirAccess.rename_absolute(absolute,absolute+".bak") != OK:
-			last_error = "无法备份旧存档，已取消替换。"
-			return false
+		if _is_valid(_parse_file(path),is_checkpoint):
+			# Only a valid live file may become the backup; never overwrite a good .bak with junk.
+			_remove(path+".bak")
+			if DirAccess.rename_absolute(absolute,absolute+".bak") != OK:
+				_remove(path+".tmp")
+				last_error = "无法备份旧存档，已取消替换。"
+				return false
+		else:
+			_remove(path)
 	if DirAccess.rename_absolute(absolute+".tmp",absolute) != OK:
-		if FileAccess.file_exists(path+".bak"):
-			DirAccess.rename_absolute(absolute+".bak",absolute)
+		if not FileAccess.file_exists(path) and FileAccess.file_exists(path+".bak"):
+			DirAccess.copy_absolute(absolute+".bak",absolute)
+		_remove(path+".tmp")
 		last_error = "无法替换检查点，保留旧存档。"
 		return false
 	return true
@@ -102,19 +137,17 @@ func save_checkpoint(data: Dictionary) -> bool:
 	if not valid_checkpoint(data):
 		last_error = "检查点数据无效，未覆盖存档。"
 		return false
-	if not _atomic_write(directory+"checkpoint.json",data):
+	if not _atomic_write(directory+"checkpoint.json",data,true):
 		return false
 	checkpoint = data.duplicate(true)
 	return true
 
 func save_preferences() -> bool:
 	var data := {"version":1,"values":preferences}
-	return valid_settings(data) and _atomic_write(directory+"settings.json",data)
+	return valid_settings(data) and _atomic_write(directory+"settings.json",data,false)
 
 func clear_checkpoint() -> void:
 	checkpoint.clear()
 	if persistent:
-		for suffix in ["",".bak",".tmp"]:
-			var path: String = directory + "checkpoint.json" + String(suffix)
-			if FileAccess.file_exists(path):
-				DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+		for suffix: String in ["",".bak",".tmp"]:
+			_remove(directory + "checkpoint.json" + suffix)
