@@ -11,9 +11,29 @@ var warehouse_gate: StaticBody3D
 var instance_count: int = 0
 var navigation := AStarGrid2D.new()
 var obstacles: Array[Rect2] = []
+var gates: Array[StaticBody3D] = []
+## Walkable corridor for AI/escort planning (0.5 m cells). Chapter maps override these in _init().
+var nav_origin := Vector2(-10,-62)
+var nav_cells := Vector2i(41,251)
+## Sky and sun; night chapters override these in _init().
+var sky_top := Color("52677c")
+var sky_horizon := Color("c9c8bb")
+var ground_horizon := Color("a4a59d")
+var ambient_color := Color("c3d0d8")
+var ambient_energy := .65
+var sun_rotation := Vector3(-42,-32,0)
+var sun_color := Color("ffe5bf")
+var sun_energy := 1.3
 
 func _ready() -> void:
 	_environment()
+	build()
+	_flush()
+	_flush_wheels()
+	rebuild_navigation()
+
+func build() -> void:
+	## Chapter one: Mercer Street, the checkpoint gate and warehouse nine.
 	block(Vector3(0,-0.2,0), Vector3(92,0.4,140), "asphalt", true)
 	for side in [-1.0,1.0]:
 		block(Vector3(side*10,0.07,0),Vector3(4,0.14,136),"concrete",true)
@@ -91,31 +111,28 @@ func _ready() -> void:
 	_storefronts()
 	_warehouse_furnish()
 	_containers()
-	_flush()
-	_flush_wheels()
-	rebuild_navigation()
 
 func _environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
 	var sky_material := ProceduralSkyMaterial.new()
-	sky_material.sky_top_color = Color("52677c")
-	sky_material.sky_horizon_color = Color("c9c8bb")
-	sky_material.ground_horizon_color = Color("a4a59d")
+	sky_material.sky_top_color = sky_top
+	sky_material.sky_horizon_color = sky_horizon
+	sky_material.ground_horizon_color = ground_horizon
 	sky.sky_material = sky_material
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("c3d0d8")
-	env.ambient_light_energy = .65
+	env.ambient_light_color = ambient_color
+	env.ambient_light_energy = ambient_energy
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	var world := WorldEnvironment.new()
 	world.environment = env
 	add_child(world)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-42,-32,0)
-	sun.light_color = Color("ffe5bf")
-	sun.light_energy = 1.3
+	sun.rotation_degrees = sun_rotation
+	sun.light_color = sun_color
+	sun.light_energy = sun_energy
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 65
 	add_child(sun)
@@ -159,6 +176,43 @@ func block(pos: Vector3, size: Vector3, key: String, solid: bool, tint: Color = 
 		body.position = pos
 		body.add_child(shape)
 		add_child(body)
+
+func block_rotated(pos: Vector3, size: Vector3, key: String, basis: Basis, tint: Color = Color.WHITE) -> void:
+	## Visual-only oriented box (gangways, mooring lines, boom bars); collisions stay axis-aligned.
+	if not batches.has(key):
+		batches[key] = []
+		batch_tints[key] = []
+	batches[key].append(Transform3D(basis*Basis.from_scale(size),pos))
+	batch_tints[key].append(tint)
+	instance_count += 1
+
+func lamp_post(pos: Vector3, side: float, color: Color = Color("ffd9a0"), energy: float = 1.5, radius: float = 20.0) -> OmniLight3D:
+	## Night chapters: a 7 m post whose arm points toward the lane centre, plus one shadowless omni light.
+	block(pos+Vector3(0,3.5,0),Vector3(.14,7,.14),"steel",false)
+	block(pos+Vector3(-side*.6,7,0),Vector3(1.3,.1,.2),"steel",false)
+	block(pos+Vector3(-side*1.05,6.9,0),Vector3(.55,.06,.22),"lamp",false)
+	var light := OmniLight3D.new()
+	light.position = pos+Vector3(-side*1.05,6.6,0)
+	light.omni_range = radius
+	light.light_energy = energy
+	light.light_color = color
+	light.shadow_enabled = false
+	add_child(light)
+	return light
+
+func solid_box(pos: Vector3, size: Vector3, basis: Basis = Basis.IDENTITY) -> StaticBody3D:
+	## Collision-only oriented box (e.g. under a rotated visual); registers its footprint for planning.
+	var body := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = size
+	shape.shape = box
+	body.transform = Transform3D(basis,pos)
+	body.add_child(shape)
+	add_child(body)
+	var footprint: Vector3 = basis.x.abs()*size.x + basis.y.abs()*size.y + basis.z.abs()*size.z
+	obstacles.append(Rect2(Vector2(pos.x-footprint.x/2,pos.z-footprint.z/2),Vector2(footprint.x,footprint.z)).grow(.3))
+	return body
 
 func _flush() -> void:
 	for key in batches:
@@ -230,7 +284,14 @@ func gate(pos: Vector3,size: Vector3) -> StaticBody3D:
 	shape.shape = collider
 	body.add_child(shape)
 	add_child(body)
+	gates.append(body)
 	return body
+
+func set_gate_open(body: StaticBody3D, open: bool) -> void:
+	## Restore-time state without a navigation rebuild per gate; call rebuild_navigation() afterwards.
+	body.visible = not open
+	body.collision_layer = 0 if open else 1
+	body.collision_mask = body.collision_layer
 
 func open_gate(body: StaticBody3D) -> void:
 	body.collision_layer = 0
@@ -251,13 +312,13 @@ func sign_at(text: String, pos: Vector3, size: int) -> Label3D:
 
 func rebuild_navigation() -> void:
 	navigation.clear()
-	navigation.region = Rect2i(0,0,41,251)
+	navigation.region = Rect2i(0,0,nav_cells.x,nav_cells.y)
 	navigation.cell_size = Vector2(.5,.5)
-	navigation.offset = Vector2(-10,-62)
+	navigation.offset = nav_origin
 	navigation.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	navigation.update()
 	var blocked: Array[Rect2] = obstacles.duplicate()
-	for door in [checkpoint_gate,warehouse_gate]:
+	for door in gates:
 		if door.visible:
 			var size: Vector3 = door.get_child(1).shape.size
 			blocked.append(Rect2(Vector2(door.position.x-size.x/2,door.position.z-size.z/2),Vector2(size.x,size.z)).grow(.3))
@@ -266,12 +327,16 @@ func rebuild_navigation() -> void:
 		var last := grid_cell(Vector3(rect.end.x,0,rect.end.y))
 		for x in range(first.x,last.x+1):
 			for z in range(first.y,last.y+1):
-				var world := Vector2(x*.5-10,z*.5-62)
+				var world := Vector2(x*.5+nav_origin.x,z*.5+nav_origin.y)
 				if rect.has_point(world):
 					navigation.set_point_solid(Vector2i(x,z),true)
 
 func grid_cell(pos: Vector3) -> Vector2i:
-	return Vector2i(clampi(roundi((pos.x+10)*2),0,40),clampi(roundi((pos.z+62)*2),0,250))
+	return Vector2i(clampi(roundi((pos.x-nav_origin.x)*2),0,nav_cells.x-1),clampi(roundi((pos.z-nav_origin.y)*2),0,nav_cells.y-1))
+
+func inside_corridor(pos: Vector3) -> bool:
+	## True inside the planning grid (chapter one: |x| <= 10). AI never plans paths outside it.
+	return pos.x >= nav_origin.x and pos.x <= nav_origin.x+(nav_cells.x-1)*.5 and pos.z >= nav_origin.y and pos.z <= nav_origin.y+(nav_cells.y-1)*.5+.5
 
 func escort_path(from_position: Vector3,to_position: Vector3) -> PackedVector2Array:
 	var start := _near_walkable(from_position)
@@ -281,7 +346,7 @@ func escort_path(from_position: Vector3,to_position: Vector3) -> PackedVector2Ar
 	return navigation.get_point_path(start,end)
 
 func _near_walkable(position_at: Vector3) -> Vector2i:
-	if absf(position_at.x) > 10 or position_at.z < -62 or position_at.z > 63:
+	if not inside_corridor(position_at):
 		return Vector2i(-1,-1)
 	var original := grid_cell(position_at)
 	var best := Vector2i(-1,-1)
@@ -291,7 +356,7 @@ func _near_walkable(position_at: Vector3) -> Vector2i:
 			var candidate := Vector2i(x,z)
 			if not navigation.region.has_point(candidate) or navigation.is_point_solid(candidate):
 				continue
-			var world := Vector3(x*.5-10,position_at.y,z*.5-62)
+			var world := Vector3(x*.5+nav_origin.x,position_at.y,z*.5+nav_origin.y)
 			var cost := world.distance_squared_to(position_at)
 			if cost >= distance:
 				continue

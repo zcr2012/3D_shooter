@@ -1,19 +1,48 @@
 extends Control
 ## Resolution-independent Chinese HUD with a bundled OFL CJK font.
+const Textures = preload("res://scripts/game/procedural_textures.gd")
 var mission
 var hit_time: float = 0.0
 var hurt_time: float = 0.0
 var notice: String = ""
 var notice_time: float = 0.0
+# Combat feedback state (shared by both HUDs). hit_kind selects the marker style;
+# hurt_peak scales the vignette by how badly the last hit landed and how low health is;
+# damage_marks hold world yaw angles toward attackers so the arcs stay anchored while turning.
+var hit_kind: String = "hit"
+var hurt_peak: float = 0.0
+var damage_marks: Array[Dictionary] = []
+var splats: Array[Dictionary] = []
+var clock: float = 0.0
+var low_health: float = 0.0
 var _font: Font
 var _sound: AudioStreamPlayer
 var _shot_sound: AudioStreamWAV
 var _hurt_sound: AudioStreamWAV
+var _vignette: GradientTexture2D
+var _splat_textures: Array[Texture2D] = []
+var _desaturate: ColorRect
+var _desaturate_material: ShaderMaterial
 const INK := Color("e0eceb")
 const MUTED := Color("8ca4ab")
 const TEAL := Color("7be0c4")
 const BG := Color(0.025, 0.052, 0.068, 0.94)
 const BUTTON := Rect2(490, 505, 300, 52)
+const HIT_COLOR := Color("7be0c4")
+const HEADSHOT_COLOR := Color("fff2b0")
+const KILL_COLOR := Color("f4503c")
+const BLOOD := Color(0.62, 0.06, 0.04)
+const LOW_HEALTH := 30.0
+const DESATURATE_SHADER := """
+shader_type canvas_item;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform float amount : hint_range(0.0, 1.0) = 0.0;
+void fragment() {
+	vec4 screen = texture(screen_texture, SCREEN_UV);
+	float grey = dot(screen.rgb, vec3(0.3, 0.59, 0.11));
+	COLOR = vec4(mix(screen.rgb, vec3(grey) * vec3(1.0, 0.9, 0.88), amount), 1.0);
+}
+"""
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -23,6 +52,63 @@ func _ready() -> void:
 	add_child(_sound)
 	_shot_sound = _make_sound(false)
 	_hurt_sound = _make_sound(true)
+	_vignette = Textures.vignette(256, 144, BLOOD)
+	for seed_value in [311, 977, 1531]:
+		_splat_textures.append(Textures.blob(64, seed_value, 0.32, 0.4, 0.28))
+	# The low-health desaturation is a screen-reading shader, so it must draw before
+	# this HUD (a sibling inserted in front) rather than on top of the panels. The
+	# parent is still adding children while _ready runs, hence the deferred insert.
+	call_deferred("_attach_desaturation")
+
+func _attach_desaturation() -> void:
+	if not is_inside_tree() or get_parent() == null:
+		return
+	_desaturate = ColorRect.new()
+	_desaturate.name = "LowHealthDesaturate"
+	_desaturate.color = Color(1, 1, 1, 0)
+	_desaturate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_desaturate.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var shader := Shader.new()
+	shader.code = DESATURATE_SHADER
+	_desaturate_material = ShaderMaterial.new()
+	_desaturate_material.shader = shader
+	_desaturate.material = _desaturate_material
+	_desaturate.visible = false
+	get_parent().add_child(_desaturate)
+	get_parent().move_child(_desaturate, get_index())
+
+func register_hit(kind: String) -> void:
+	## kind: "hit", "headshot" or "kill" - larger, longer and red for a confirmed kill.
+	hit_kind = kind
+	hit_time = 0.42 if kind == "kill" else (0.28 if kind == "headshot" else 0.2)
+
+func register_damage(amount: int, source: Vector3) -> void:
+	## Vignette strength follows the wound and remaining health; the arc remembers
+	## the attacker's world bearing; a splat lands away from the reticle.
+	var player = mission.player if is_instance_valid(mission) else null
+	var health_fraction := 1.0
+	if player != null:
+		health_fraction = clampf(float(player.health) / maxf(1.0, float(player.max_health)), 0.0, 1.0)
+	hurt_peak = clampf(0.28 + 0.35 * clampf(amount / 25.0, 0.0, 1.0) + 0.4 * (1.0 - health_fraction), 0.0, 0.95)
+	hurt_time = 0.35 + 0.25 * (1.0 - health_fraction)
+	if source.is_finite() and player != null:
+		var offset: Vector3 = source - player.global_position
+		damage_marks.append({"yaw": atan2(-offset.x, -offset.z), "time": 1.3})
+		if damage_marks.size() > 6:
+			damage_marks.pop_front()
+	var angle := randf_range(0.0, TAU)
+	var radius := randf_range(190.0, 330.0)
+	splats.append({"pos": Vector2(640, 360) + Vector2(cos(angle), sin(angle)) * radius, "rot": randf_range(0.0, TAU),
+		"scale": randf_range(2.6, 4.2), "time": 1.6, "tex": randi() % _splat_textures.size()})
+	if splats.size() > 4:
+		splats.pop_front()
+
+func clear_feedback() -> void:
+	hit_time = 0.0
+	hurt_time = 0.0
+	hurt_peak = 0.0
+	damage_marks.clear()
+	splats.clear()
 
 func _make_sound(hurt: bool) -> AudioStreamWAV:
 	# Short original synthesized cues; no external sound licensing dependency.
@@ -51,8 +137,72 @@ func _process(delta: float) -> void:
 	hit_time = maxf(0, hit_time - delta)
 	hurt_time = maxf(0, hurt_time - delta)
 	notice_time = maxf(0, notice_time - delta)
+	clock += delta
+	for i in range(damage_marks.size() - 1, -1, -1):
+		damage_marks[i].time -= delta
+		if damage_marks[i].time <= 0.0:
+			damage_marks.remove_at(i)
+	for i in range(splats.size() - 1, -1, -1):
+		splats[i].time -= delta
+		if splats[i].time <= 0.0:
+			splats.remove_at(i)
+	low_health = 0.0
+	if is_instance_valid(mission) and mission.state == "active" and is_instance_valid(mission.player):
+		var health: int = mission.player.health
+		if health > 0:
+			low_health = clampf((LOW_HEALTH - health) / LOW_HEALTH, 0.0, 1.0)
+	if is_instance_valid(_desaturate):
+		_desaturate.visible = low_health > 0.0
+		if _desaturate.visible:
+			_desaturate_material.set_shader_parameter("amount", 0.55 * low_health + 0.1 * low_health * sin(clock * 5.0))
 	mouse_filter = Control.MOUSE_FILTER_IGNORE if mission.state == "active" else Control.MOUSE_FILTER_STOP
 	queue_redraw()
+
+func _draw_damage_feedback(player) -> void:
+	## Drawn first (under the panels): vignette, blood splats and attacker arcs.
+	var flash := hurt_peak * clampf(hurt_time / 0.35, 0.0, 1.0)
+	var pulse := low_health * (0.3 + 0.12 * sin(clock * 5.0))
+	var alpha := clampf(flash + pulse, 0.0, 0.9)
+	if alpha > 0.002:
+		draw_texture_rect(_vignette, Rect2(0, 0, 1280, 720), false, Color(1, 1, 1, alpha))
+	if low_health > 0.0:
+		draw_rect(Rect2(0, 0, 1280, 720), Color(0.05, 0.01, 0.01, 0.28 * low_health))
+	if hurt_time > 0.2:
+		draw_rect(Rect2(0, 0, 1280, 720), Color(0.8, 0.12, 0.05, (hurt_time - 0.2) * 0.5 * hurt_peak))
+	var base := Transform2D(0.0, size / Vector2(1280, 720), 0.0, Vector2.ZERO)
+	for splat in splats:
+		var texture: Texture2D = _splat_textures[int(splat.tex)]
+		draw_set_transform_matrix(base * Transform2D(float(splat.rot), Vector2.ONE * float(splat.scale), 0.0, Vector2(splat.pos)))
+		draw_texture(texture, -texture.get_size() / 2.0, Color(0.42, 0.03, 0.02, 0.7 * clampf(float(splat.time) / 0.6, 0.0, 1.0)))
+	draw_set_transform_matrix(base)
+	var center := Vector2(640, 360)
+	for mark in damage_marks:
+		# Screen up is forward; positive bearing is an attacker on the left.
+		var bearing := wrapf(float(mark.yaw) - float(player._yaw), -PI, PI)
+		var angle := -PI / 2.0 - bearing
+		var fade := clampf(float(mark.time) / 0.5, 0.0, 1.0)
+		draw_arc(center, 118, angle - 0.3, angle + 0.3, 16, Color(1.0, 0.45, 0.3, 0.3 * fade), 4, true)
+		draw_arc(center, 110, angle - 0.42, angle + 0.42, 20, Color(0.92, 0.16, 0.08, 0.88 * fade), 9, true)
+
+func _draw_hit_marker(center: Vector2) -> void:
+	if hit_time <= 0:
+		return
+	var color := HIT_COLOR
+	var inner := 9.0
+	var outer := 15.0
+	var width := 2.0
+	if hit_kind == "kill":
+		color = KILL_COLOR
+		inner = 11.0
+		outer = 22.0
+		width = 3.0
+	elif hit_kind == "headshot":
+		color = HEADSHOT_COLOR
+		outer = 18.0
+		width = 2.5
+	color.a = clampf(hit_time / 0.12, 0.0, 1.0)
+	for direction in [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
+		draw_line(center + direction * inner, center + direction * outer, color, width)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -61,6 +211,8 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 			if mission.state == "briefing":
 				mission.start_mission()
+			elif mission.state == "won" and mission.has_method("next_chapter"):
+				mission.next_chapter()
 			elif mission.state in ["won", "lost"]:
 				mission.restart_mission()
 
@@ -79,6 +231,7 @@ func _draw() -> void:
 		_draw_overlay()
 		return
 	var player = mission.player
+	_draw_damage_feedback(player)
 	draw_rect(Rect2(28, 26, 348, 100), BG)
 	draw_rect(Rect2(28, 26, 3, 100), TEAL)
 	_text("第九辖区　／　现场行动", Vector2(48, 53), 13, TEAL)
@@ -115,11 +268,7 @@ func _draw() -> void:
 	var gap := 4.0 if Input.is_action_pressed("aim") else 8.0
 	for direction in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
 		draw_line(center + direction * gap, center + direction * (gap + 7), INK, 1.5)
-	if hit_time > 0:
-		for direction in [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
-			draw_line(center + direction * 11, center + direction * 17, TEAL, 2)
-	if hurt_time > 0:
-		draw_rect(Rect2(0, 0, 1280, 720), Color(0.8, 0.13, 0.07, hurt_time * 0.3), false, 15)
+	_draw_hit_marker(center)
 
 func _draw_radar() -> void:
 	var rect := Rect2(1120, 68, 132, 176)

@@ -17,6 +17,11 @@ var _react_time: float = 0.0
 var _model: Node3D
 var _animation: AnimationPlayer
 var _status: Label3D
+# Hit flash: one shared additive overlay applied on top of the imported materials,
+# so the shared operator material is never duplicated per hit.
+static var _flash_overlay: StandardMaterial3D
+var _flash_meshes: Array[MeshInstance3D] = []
+var _flash_time: float = 0.0
 
 func _ready() -> void:
 	collision_layer = 4
@@ -33,6 +38,7 @@ func _ready() -> void:
 	_model = MODEL.instantiate()
 	add_child(_model)
 	_animation = _find_animation(_model)
+	_collect_flash_meshes(_model)
 	# Distinct armband/marker rather than reusing the player's identification.
 	var band := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
@@ -55,6 +61,36 @@ func _ready() -> void:
 	_status.text = "警戒"
 	add_child(_status)
 	_play("IdleArmed")
+
+static func flash_overlay() -> StandardMaterial3D:
+	if _flash_overlay == null:
+		_flash_overlay = StandardMaterial3D.new()
+		_flash_overlay.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_flash_overlay.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		_flash_overlay.albedo_color = Color(0.62, 0.5, 0.42)
+		_flash_overlay.disable_receive_shadows = true
+	return _flash_overlay
+
+func _collect_flash_meshes(node: Node) -> void:
+	if node is MeshInstance3D:
+		_flash_meshes.append(node)
+	for child in node.get_children():
+		_collect_flash_meshes(child)
+
+func flash_hit(duration: float = 0.09) -> void:
+	## Brightens the whole body for a few frames; cleared from _process.
+	_flash_time = duration
+	for mesh in _flash_meshes:
+		if is_instance_valid(mesh):
+			mesh.material_overlay = flash_overlay()
+
+func _process(delta: float) -> void:
+	if _flash_time > 0.0:
+		_flash_time -= delta
+		if _flash_time <= 0.0:
+			for mesh in _flash_meshes:
+				if is_instance_valid(mesh):
+					mesh.material_overlay = null
 
 func _find_animation(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:
@@ -109,7 +145,7 @@ func _physics_process(delta: float) -> void:
 				_react_time = 0.28
 				_play("FireArmed")
 				fired.emit(global_position + Vector3.UP * 1.3, player.global_position + Vector3.UP)
-				player.take_damage(12)
+				player.take_damage(12, global_position + Vector3.UP * 1.4)
 	else:
 		_alert_time = 0
 		_status.text = "警戒"
@@ -133,6 +169,7 @@ func take_damage(amount: int) -> bool:
 		return false
 	health = maxi(0, health - amount)
 	_react_time = 0.5
+	flash_hit()
 	_play("HitReact")
 	if health == 0:
 		active = false

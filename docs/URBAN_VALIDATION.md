@@ -14,6 +14,7 @@
 | 资源来源与源文件关联 | 原始下载及 GLB / Blender 文件 SHA-256 检查通过 | 资产审计、Poly Haven manifest、Python 测试 |
 
 执行过删除 `.godot` 缓存后的干净导入和 `python tools/project.py verify` 完整回归。
+2026-09-27 第三批（命中/受击反馈）后该套件增至 71 项，新增项与限制见 `docs/CHAPTER_ZH_VALIDATION.md`。
 之后补充敌人自主射击两项检查、HUD 退出音频清理，城市关 47 项及默认入口再次运行通过。
 
 ## 47 项检查覆盖什么

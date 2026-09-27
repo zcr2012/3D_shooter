@@ -4,7 +4,11 @@ extends CharacterBody3D
 ## Combat is opt-in: the mission scene enables it; the animation fixture stays isolated.
 
 signal shot_fired(origin: Vector3, target: Vector3, hit: bool)
-signal damaged(health: int)
+## Where the round stopped. kind: "miss" (max range), "world" (static geometry),
+## "hit", "kill" (confirmed damage / target reached zero), "dead" (target refused: already down).
+signal bullet_impact(where: Vector3, normal: Vector3, direction: Vector3, kind: String, headshot: bool)
+## source is the attacker's position (Vector3.INF when unknown) for the directional indicator.
+signal damaged(health: int, amount: int, source: Vector3)
 signal died
 
 @export var combat_enabled: bool = false
@@ -23,6 +27,12 @@ var _hurt_cooldown: float = 0.0
 @export var starting_ammo: int = 30
 @export var starting_reserve_ammo: int = 90
 
+const BODY_DAMAGE: int = 34
+const HEADSHOT_DAMAGE: int = 68
+# Operators are 1.69 m tall with the head joint at 1.455 m; enemy colliders are
+# single capsules, so "head" is the top band plus a lateral test against the axis.
+const HEADSHOT_HEIGHT: float = 1.42
+const HEADSHOT_RADIUS: float = 0.17
 const WALK_AUTHORED_SPEED: float = 1.0
 const RUN_AUTHORED_SPEED: float = 2.6
 const ANIMATION_BLEND: float = 0.15
@@ -217,7 +227,9 @@ func _physics_process(delta: float) -> void:
 	_velocity_y = velocity.y
 	# Collision-resolved horizontal travel, rather than desired input speed.
 	var actual_velocity := get_real_velocity()
-	_planar_speed = Vector2(actual_velocity.x, actual_velocity.z).length()
+	# move_and_slide() divides the position delta by the frame delta, so a zero
+	# time scale (frozen capture stills) would make the real velocity NaN.
+	_planar_speed = Vector2(actual_velocity.x, actual_velocity.z).length() if actual_velocity.is_finite() else 0.0
 	if combat_enabled and _look_enabled and (Input.is_action_pressed("aim") or Input.is_action_pressed("fire")):
 		model.rotation.y = lerp_angle(model.rotation.y, 0.0, 1.0 - exp(-18.0 * delta))
 	elif dir.length_squared() > 0.01:
@@ -395,19 +407,47 @@ func fire_at(origin: Vector3, target: Vector3) -> void:
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	var end := target
 	var confirmed := false
+	var kind := "miss"
+	var headshot := false
+	var normal := -direction
 	if not result.is_empty():
 		end = result.position
+		normal = result.normal
 		var collider: Object = result.collider
 		if collider.has_method("take_damage"):
-			confirmed = bool(collider.call("take_damage", 34))
+			headshot = is_headshot(collider, end, direction)
+			confirmed = bool(collider.call("take_damage", HEADSHOT_DAMAGE if headshot else BODY_DAMAGE))
+			kind = "dead"
+			if confirmed:
+				var remaining: Variant = collider.get("health")
+				kind = "kill" if (remaining is int or remaining is float) and remaining <= 0 else "hit"
+		else:
+			kind = "world"
 	shot_fired.emit(origin, end, confirmed)
+	bullet_impact.emit(end, normal, direction, kind, headshot)
 
-func take_damage(amount: int) -> void:
+func is_headshot(target: Object, point: Vector3, direction: Vector3) -> bool:
+	## Head zone: contact above HEADSHOT_HEIGHT in the target's local space and the
+	## bullet path passing within HEADSHOT_RADIUS of the body axis (a capsule's shoulder
+	## surface sits 0.25 m out, so the ray-to-axis distance is what separates head from shoulder).
+	var body := target as Node3D
+	if body == null:
+		return false
+	var local_point := body.to_local(point)
+	if local_point.y < HEADSHOT_HEIGHT:
+		return false
+	var local_direction := body.global_basis.inverse() * direction
+	var offset := Vector2(local_point.x, local_point.z)
+	var heading := Vector2(local_direction.x, local_direction.z)
+	var lateral := offset.length() if heading.length_squared() < 0.000001 else absf(offset.cross(heading.normalized()))
+	return lateral < HEADSHOT_RADIUS
+
+func take_damage(amount: int, source: Vector3 = Vector3.INF) -> void:
 	if not combat_enabled or not controls_enabled or health <= 0 or amount <= 0 or _hurt_cooldown > 0.0:
 		return
 	_hurt_cooldown = 0.5
 	health = maxi(0, health - amount)
-	damaged.emit(health)
+	damaged.emit(health, amount, source)
 	if health == 0:
 		stop_combat()
 		died.emit()

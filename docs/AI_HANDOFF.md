@@ -25,6 +25,60 @@
   换环境后需重建。fps_kit 内嵌贴图 md5 == .import generator_parameters（已用 RGB 像素 md5 验证），可以放心改几何不动贴图。
 - 仍未做：真人 Windows 试玩验收、配音听审、更多剧情/过场/配音扩展（配音生成管线见 build_chapter_audio.py，注意是否需要联网 TTS）。
 
+## 2026-09-27 第三批交接（arena/01a0e180-3d-shooter 会话：命中/受击反馈）
+
+用户原话：“敌人被击中和我被击中都能有特效，并且对比和使命召唤还有不同的一并修复。” 范围是命中反馈包 + 射击手感，
+不含连杀、配件、载具、多人；不得声称“已达使命召唤水准”或“商业级”。
+
+- 本地提交 `24ff141`（实现）及其后的文档/两项低血量检查提交；推送时沙箱 GitHub token 再次失效，
+  **接手第一步：`git push origin <本会话分支>`，看 CI（win+linux）与 16 张 preview 截图，再把结果写回 `docs/CHAPTER_ZH_VALIDATION.md`**。
+  重点核对 `preview/12_muzzle_flash`（三片火焰朝向/尺寸）、`13_wall_impact`（尘土 + 弹孔）、`14_hit_effects`（血雾 + 敌人增亮）、
+  `15_kill_confirm`（红色击杀标记、爆头计数）、`16_player_hurt`（左后方受击弧 + 血晕 + 低血量脱色）。
+- 本批次在沙箱内用 Godot 4.6.3 **源码编译的无头引擎**（无 Vulkan/GL，只能跑脚本）实际运行了五套回归：
+  session 95、chapter_zh 33、urban 71、gameplay 31、production motion 374，全部 0 失败；无法在沙箱渲染截图。
+  用同一引擎把 `capture_chapter.gd` 的 16 帧流程无渲染跑通（临时替换 capture() 为状态打印，脚本未入库），
+  由此抓到并修复一个 NaN：`Engine.time_scale = 0` 时 `move_and_slide()` 用 0 除位移，`get_real_velocity()` 变 NaN，
+  枪械 bob 随之 NaN 并刷屏 `instance_set_transform` ERROR。修法是 capture 用 `FROZEN = 0.0001` 近冻结，且 `player.gd` 对非有限速度回退 0。
+- 编译方法（约 53 分钟，-j2）：codeload.github.com 下载 `godot-4.6.3-stable` 源码，`scons platform=linuxbsd target=editor
+  vulkan=no opengl3=no use_llvm=no` 并关闭大部分模块，另需 pkg-config 空桩；产物在 `~/.cache/godot-build/`（不持久，换环境要重编）。
+  它报 `ERROR: Godot was compiled without fontconfig`，所以不能直接用 `tools/project.py verify`（会把该行算失败），要逐套 `--headless --script` 运行。
+- 信号/接口变化：`player.take_damage(amount, source := Vector3.INF)`、`damaged(health, amount, source)`、
+  新增 `bullet_impact(where, normal, direction, kind, headshot)`，kind ∈ miss/world/hit/kill/dead；敌人传 `global_position + UP*1.4`。
+  `mission.gd`/`operation.gd` 都已改连接；`verify_gameplay.gd` 的位置参数调用仍兼容。
+- 新文件：`scripts/game/hit_effects.gd`（血雾/尘土/火花/弹孔/地面血迹对象池，固定 54 个子节点，不占 MultiMesh 批次）、
+  `scripts/game/procedural_textures.gd`（软圆盘/星形/血斑/晕影程序贴图）；`enemy.gd` 用 `material_overlay` 做增亮，不复制共享材质。
+- 存档：检查点新增可选 `headshots`（缺省 0，需 ≤ hits），旧存档仍有效；`verify_session` 覆盖接受/拒绝/回退。
+- 音效：`scripts/build_chapter_audio.py` 新增 hit_confirm/kill_confirm/headshot/flesh_impact/bullet_impact/heartbeat 六个程序合成 wav
+  （幂等，manifest 13 项）；仍是程序合成，不是录音。
+- 与《使命召唤》对照后**已做**：命中/爆头/击杀三色标记与音效、血雾+墙面尘土火花+弹孔+地面血迹、敌人受击增亮、
+  受击方向弧、开火/受击弹簧式镜头冲击、按血量缩放的血晕 + 低血量脉冲/脱色/心跳、血溅覆盖层、三片枪口焰+点光+一次性硝烟+抛壳、
+  动态准星扩散、结算界面爆头数、冲刺持枪姿态与转向枪械滞后、罗盘指针方向修正。
+  **未做**（需要用户决定或超范围）：自动回血（会改变检查点最低生命与难度语义，故意没做）、空仓扣机声、冲刺后出枪延迟、
+  敌人布娃娃、子弹呼啸声（敌人子弹全部命中，无擦过弹道）、手雷/新枪械/配件/连杀。
+- 验证语义：Tactical AI 不变量测试一项未改（last_seen 只随目视更新、`_plan_to` 距离/横向限制、卡住>1.2s 转搜索、穿墙零伤害）。
+
+## 2026-09-27 第四批交接（arena/01a0e180-3d-shooter 会话：完整剧本 + 三章战役）
+
+用户原话：“你先设计出完整的剧本，然后把游戏先做完，最后统一一起推送。” 做法：先写 `docs/STORY_SCRIPT_ZH.md`
+（三章 + 尾声，权威文本），再把第二、三章做成可玩章节，最后一次性推送（沙箱 GitHub 凭据失效时未推送，见 git log）。
+
+- 结构：`scripts/urban/chapter.gd` 是章节基类（从原 `operation.gd` 抽出），`operation.gd` 只剩第一章的表和护送逻辑；
+  `chapter2.gd`/`yard_map.gd`、`chapter3.gd`/`pier_map.gd`、`campaign.gd`（路由 + `pending_restore`）、
+  `scenes/yard_operation.tscn`、`scenes/pier_operation.tscn`。实现说明见 `docs/CAMPAIGN.md`。
+- `city_map.gd`：`_ready()` = 环境 → `build()` → 合批 → 寻路；子类重写 `build()` 与 `_init()` 里的天空/环境光/太阳参数；
+  新增 `gates` 列表、`set_gate_open()`、`inside_corridor()`、`block_rotated()`、`solid_box()`、`lamp_post()`。
+  `urban_enemy._plan_to` 用 `city.inside_corridor()`，AI 不变量未变。
+- 存档：`checkpoint.json` 可选 `chapter`（缺省 1）；新增 `campaign.json` 进度（`unlocked`/`completed`）。
+  `restore_checkpoint()` 拒绝他章存档，`continue_checkpoint()` 会经 `Campaign.open_chapter(tree, chapter, true)` 跳章后恢复。
+  HUD/回车：结算按回车 `next_chapter()`；第三章结算显示 `epilogue` 五行。
+- 对白：`scripts/build_dialogue_manifest.py` 是 19 段对白与 manifest 的唯一来源；三种 AI 合成声音（voice-00/01/02）。
+  19 段全部已合成并入库（`pier_hold` 在推送前补齐）。新增/重生成音频后：重跑 manifest 脚本、引擎 `--editor --import` 生成 `.import`。
+- 验证：新增 `tools/verify_campaign.gd`（已加入 `tools/project.py` SUITES 与 CI 产物）；`capture_chapter.gd` 扩到 23 帧
+  （CI grep 已改为 `CAPTURE: 23 frames`）。第一章五套件在重构后应保持原通过数（urban 71 / session 95 / chapter_zh 33 /
+  gameplay 31 / motion 374）；本地无头引擎结果记录在 `docs/CHAPTER_ZH_VALIDATION.md`。
+- 未做/待人工：真人通关三章；新章节截图目视（17–23 帧）；沈国栋无模型（只声音）；第二、三章敌人沿用承包商模型；
+  尾声没有滚动字幕动画（静态五行）。
+
 ## 本次交接的实际状态（2026-09-27 更新）
 - 分支 `arena/01a0e0e4-3d-shooter` 已修复原 CI 阻断（`session_store.gd:118` 类型推断），并继续修复后续暴露的问题。
 - 最新 CI（官方 Godot 4.6.3，Windows + Linux）五套引擎回归共 573 项检查通过：session 88、chapter_zh 33、urban 47、
@@ -52,17 +106,20 @@
 - 护送新增 H 等待/跟随、靠近障碍的目标点修正与路径起点剪裁。CI 中完整护送路线已验证不卡住并成功撤离；仍需真人游玩验收。
 
 ## 重点文件
-- `godot_project/scripts/urban/operation.gd`：剧情、过场、阶段流程、存档恢复、护送。
+- `godot_project/scripts/urban/chapter.gd`：章节基类（阶段流程、过场、电台、补给、检查点、结算、章节路由）。
+- `operation.gd`（第一章 + 护送）、`chapter2.gd`/`yard_map.gd`（堆场）、`chapter3.gd`/`pier_map.gd`（码头）、`campaign.gd`。
 - `session_store.gd`：存档校验/磁盘读写（tmp/bak 原子替换）。
 - `session_menu.gd`：暂停设置与失焦处理。
 - `urban_hud.gd`：中文界面、字幕、检查点提示。
 - `chapter_audio.gd`：配音/环境/音效与暂停。
 - `city_map.gd`、`urban_enemy.gd`：地图、寻路、战术 AI。
+- `scripts/game/hit_effects.gd`、`procedural_textures.gd`、`fps_player.gd`、`game/hud.gd`：命中/受击特效池、程序贴图、枪口焰/抛壳/镜头冲击、受击弧/血晕/血溅。
 - `godot_project/tools/verify_session.gd`：新暂停/存档/恢复/护送专项，需要运行、修复并增加边界覆盖。
 - `verify_chapter_zh.gd`、`verify_urban.gd`、`verify_gameplay.gd`、`verify_production_motion.gd`：其他回归。
 - `tools/project.py verify`：导入并运行以上五套；遇脚本错误/超时会失败，并向 GitHub annotations 写错误摘要。
 - `.github/workflows/verify.yml`：Windows/Linux 官方引擎验证、Linux Xvfb/Mesa截图、Windows官方模板导出。
-- `godot_project/tools/capture_chapter.gd`：简报/街道/暂停截图；它是程序布置场景截图，不是人工通关录像。
+- `godot_project/tools/verify_campaign.gd`：第二、三章推进、地图布局、进度/章节存档规则。
+- `godot_project/tools/capture_chapter.gd`：简报/街道/暂停 + 命中特效 + 第二、三章共 23 帧截图；它是程序布置场景截图（特效帧用 `advance()` 慢放到固定游戏时刻），不是人工通关录像。
 - `scripts/check_chinese_font.py`：fonttools 字库覆盖及源文件哈希报告生成。修改脚本文案后重跑，否则完整性测试会报告旧哈希。
 
 ## 推荐执行顺序

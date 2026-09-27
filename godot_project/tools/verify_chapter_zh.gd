@@ -34,12 +34,25 @@ func _run() -> void:
 	for line in lines:
 		fits = fits and mission.hud._font.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,20).x <= 260.1
 	check("zh.wrap_fits_box",fits)
-	check("voice.eight_dialogues",mission.sound.lines.size() == 8)
+	check("voice.nineteen_dialogues",mission.sound.lines.size() == 19)
+	# Every synthesized clip decodes; a line the manifest marks pending has no file and plays as timed text.
+	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/audio/zh/manifest.json"))
+	var pending: Array[String] = []
+	for clip in manifest.clips:
+		if clip.file == null:
+			pending.append(String(clip.id))
 	var playable := true
-	for id in mission.sound.lines:
-		var stream: AudioStream = load("res://assets/audio/zh/"+id+".mp3")
+	var decoded := 0
+	for id: String in mission.sound.lines:
+		var path: String = "res://assets/audio/zh/"+id+".mp3"
+		if id in pending:
+			playable = playable and not ResourceLoader.exists(path) and mission.sound.speak(id) >= 6.0
+			continue
+		var stream: AudioStream = load(path)
 		playable = playable and stream != null and stream.get_length() > 5
-	check("voice.clips_decode",playable)
+		decoded += 1
+	mission.sound.stop_speech()
+	check("voice.clips_decode",playable and decoded == 19-pending.size() and decoded >= 18)
 	mission.start_mission()
 	check("cinematic.intro_started",mission.state == "cinematic" and mission.cinematic_camera.current)
 	check("cinematic.controls_blocked",not mission.player.controls_enabled and not mission.enemies[0].active)

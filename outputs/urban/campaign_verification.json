@@ -1,0 +1,365 @@
+{
+	"checks": [
+		{
+			"id": "campaign.three_scenes",
+			"passed": true
+		},
+		{
+			"id": "campaign.scene_chapter_indices",
+			"passed": true
+		},
+		{
+			"id": "yard.briefing_state",
+			"passed": true
+		},
+		{
+			"id": "yard.rescue_flags_unused",
+			"passed": true
+		},
+		{
+			"id": "yard.static_batch_budget",
+			"passed": true
+		},
+		{
+			"id": "yard.large_geometry",
+			"passed": true
+		},
+		{
+			"id": "yard.two_gates_registered",
+			"passed": true
+		},
+		{
+			"id": "yard.spawns_and_supplies_on_walkable_cells",
+			"passed": true
+		},
+		{
+			"id": "yard.objectives_next_to_walkable_cells",
+			"passed": true
+		},
+		{
+			"id": "yard.first_objective_reachable_from_spawn",
+			"passed": true
+		},
+		{
+			"id": "yard.corridor_bounds",
+			"passed": true
+		},
+		{
+			"id": "yard.night_lighting",
+			"passed": true
+		},
+		{
+			"id": "yard.text_fields_populated",
+			"passed": true
+		},
+		{
+			"id": "yard.dialogue_ids_exist",
+			"passed": true
+		},
+		{
+			"id": "yard.container_closed",
+			"passed": true
+		},
+		{
+			"id": "yard.boom_raised",
+			"passed": true
+		},
+		{
+			"id": "yard.briefing_blocks_interaction",
+			"passed": true
+		},
+		{
+			"id": "yard.first_group_only",
+			"passed": true
+		},
+		{
+			"id": "yard.opening_radio_is_intro",
+			"passed": true
+		},
+		{
+			"id": "yard.cannot_skip_remote",
+			"passed": true
+		},
+		{
+			"id": "yard.cannot_skip_contacts",
+			"passed": true
+		},
+		{
+			"id": "yard.hint_after_clear",
+			"passed": true
+		},
+		{
+			"id": "yard.gate_opens",
+			"passed": true
+		},
+		{
+			"id": "yard.gate_line_from_chen_mo",
+			"passed": true
+		},
+		{
+			"id": "yard.second_group_active",
+			"passed": true
+		},
+		{
+			"id": "yard.office_reachable_after_gate",
+			"passed": true
+		},
+		{
+			"id": "yard.routes_physically_clear_to_office",
+			"passed": true
+		},
+		{
+			"id": "yard.office_opens_lane_d",
+			"passed": true
+		},
+		{
+			"id": "yard.lane_d_two_contacts",
+			"passed": true
+		},
+		{
+			"id": "yard.container_reachable_after_lane_gate",
+			"passed": true
+		},
+		{
+			"id": "yard.route_physically_clear_to_container",
+			"passed": true
+		},
+		{
+			"id": "yard.container_opens",
+			"passed": true
+		},
+		{
+			"id": "yard.container_line_from_chen_mo",
+			"passed": true
+		},
+		{
+			"id": "yard.reinforcements_spawned",
+			"passed": true
+		},
+		{
+			"id": "yard.route_physically_clear_to_exit",
+			"passed": true
+		},
+		{
+			"id": "yard.intercept_not_in_lane_d",
+			"passed": true
+		},
+		{
+			"id": "yard.intercept_in_middle_lanes",
+			"passed": true
+		},
+		{
+			"id": "yard.exit_needs_area_clear",
+			"passed": true
+		},
+		{
+			"id": "yard.final_hint",
+			"passed": true
+		},
+		{
+			"id": "yard.exit_boom_wins",
+			"passed": true
+		},
+		{
+			"id": "yard.ten_contacts",
+			"passed": true
+		},
+		{
+			"id": "yard.debrief_line",
+			"passed": true
+		},
+		{
+			"id": "yard.unlocks_chapter_three",
+			"passed": true
+		},
+		{
+			"id": "yard.completion_blocks_shooting",
+			"passed": true
+		},
+		{
+			"id": "yard.result_text",
+			"passed": true
+		},
+		{
+			"id": "yard.restore_own_checkpoint",
+			"passed": true
+		},
+		{
+			"id": "yard.restore_world_state",
+			"passed": true
+		},
+		{
+			"id": "yard.restore_counts",
+			"passed": true
+		},
+		{
+			"id": "yard.refuses_chapter_one_checkpoint",
+			"passed": true
+		},
+		{
+			"id": "store.chapter_field_validation",
+			"passed": true
+		},
+		{
+			"id": "store.progress_validation",
+			"passed": true
+		},
+		{
+			"id": "store.progress_never_regresses",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_defaults",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_unlock_writes",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_roundtrip",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_completed_writes",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_completed_roundtrip",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_tampered_falls_back_to_backup",
+			"passed": true
+		},
+		{
+			"id": "disk.progress_both_damaged_start_fresh",
+			"passed": true
+		},
+		{
+			"id": "disk.checkpoint_keeps_chapter",
+			"passed": true
+		},
+		{
+			"id": "disk.checkpoint_chapter_roundtrip",
+			"passed": true
+		},
+		{
+			"id": "pier.briefing_state",
+			"passed": true
+		},
+		{
+			"id": "pier.static_batch_budget",
+			"passed": true
+		},
+		{
+			"id": "pier.large_geometry",
+			"passed": true
+		},
+		{
+			"id": "pier.two_gates_registered",
+			"passed": true
+		},
+		{
+			"id": "pier.spawns_and_supplies_on_walkable_cells",
+			"passed": true
+		},
+		{
+			"id": "pier.objectives_next_to_walkable_cells",
+			"passed": true
+		},
+		{
+			"id": "pier.first_objective_reachable_from_spawn",
+			"passed": true
+		},
+		{
+			"id": "pier.corridor_bounds",
+			"passed": true
+		},
+		{
+			"id": "pier.night_lighting",
+			"passed": true
+		},
+		{
+			"id": "pier.text_fields_populated",
+			"passed": true
+		},
+		{
+			"id": "pier.dialogue_ids_exist",
+			"passed": true
+		},
+		{
+			"id": "pier.gangway_is_walkable_slope",
+			"passed": true
+		},
+		{
+			"id": "pier.first_group_only",
+			"passed": true
+		},
+		{
+			"id": "pier.gate_opens",
+			"passed": true
+		},
+		{
+			"id": "pier.crane_zone_opens_fence",
+			"passed": true
+		},
+		{
+			"id": "pier.missing_clip_is_text_or_skipped",
+			"passed": true
+		},
+		{
+			"id": "pier.terminal_reachable_after_fence",
+			"passed": true
+		},
+		{
+			"id": "pier.routes_physically_clear",
+			"passed": true
+		},
+		{
+			"id": "pier.terminal_revokes_permit",
+			"passed": true
+		},
+		{
+			"id": "pier.stern_needs_area_clear",
+			"passed": true
+		},
+		{
+			"id": "pier.final_hint",
+			"passed": true
+		},
+		{
+			"id": "pier.arrest_wins",
+			"passed": true
+		},
+		{
+			"id": "pier.arrest_line",
+			"passed": true
+		},
+		{
+			"id": "pier.campaign_completed",
+			"passed": true
+		},
+		{
+			"id": "pier.epilogue_ends_with_title",
+			"passed": true
+		},
+		{
+			"id": "pier.hud_draws_without_error",
+			"passed": true
+		}
+	],
+	"engine": {
+		"build": "custom_build",
+		"hash": "unknown",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (custom_build)",
+		"timestamp": 0
+	},
+	"failure_count": 0,
+	"status": "PASS"
+}

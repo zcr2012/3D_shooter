@@ -3,16 +3,19 @@ extends Node3D
 ## isolated animation regression fixture; this scene owns all gameplay state.
 const Enemy = preload("res://scripts/game/enemy.gd")
 const HUD = preload("res://scripts/game/hud.gd")
+const HitEffects = preload("res://scripts/game/hit_effects.gd")
 const PlayerScene = preload("res://scenes/player.tscn")
 
 var player
 var enemies: Array = []
 var hud
+var effects: HitEffects
 var state: String = "briefing"
 var remaining: int = 0
 var elapsed: float = 0.0
 var shots: int = 0
 var hits: int = 0
+var headshots: int = 0
 var supplies_used: bool = false
 var extraction := Vector3(0, 0, -12)
 var supply_position := Vector3(7, 0, 7)
@@ -25,9 +28,12 @@ func _ready() -> void:
 	player.position = Vector3(0, 0.2, 10)
 	add_child(player)
 	player.shot_fired.connect(_on_shot)
+	player.bullet_impact.connect(_on_impact)
 	player.damaged.connect(_on_damage)
 	player.died.connect(_on_death)
 	player.stop_combat()
+	effects = HitEffects.new()
+	add_child(effects)
 	for location in [Vector3(-5, 0.1, 0), Vector3(5, 0.1, -3), Vector3(-5, 0.1, -8), Vector3(3, 0.1, -10)]:
 		var enemy := Enemy.new()
 		enemy.position = location
@@ -88,16 +94,34 @@ func _on_shot(origin: Vector3, target: Vector3, confirmed: bool) -> void:
 	shots += 1
 	if confirmed:
 		hits += 1
+		hud.hit_kind = "hit"
 		hud.hit_time = 0.16
 	_tracer(origin, target, Color("ffe4ab"))
 	hud.play_sound(false)
 
+func _on_impact(where: Vector3, normal: Vector3, direction: Vector3, kind: String, headshot: bool) -> void:
+	## Visual side of a resolved round: surface impact or body hit, plus marker style.
+	if state != "active" or effects == null:
+		return
+	match kind:
+		"world":
+			effects.spawn_impact(where, normal)
+		"hit", "kill":
+			effects.spawn_blood(where, direction)
+			if headshot:
+				headshots += 1
+			hud.register_hit("kill" if kind == "kill" else ("headshot" if headshot else "hit"))
+			if kind == "kill" or randf() < 0.4:
+				var ground := effects.floor_under(where, get_world_3d().direct_space_state)
+				if not ground.is_empty():
+					effects.spawn_splat(ground.position, ground.normal)
+
 func _enemy_shot(origin: Vector3, target: Vector3) -> void:
 	_tracer(origin, target, Color("ed8060"))
 
-func _on_damage(_health: int) -> void:
+func _on_damage(_health: int, amount: int, source: Vector3) -> void:
 	if hud:
-		hud.hurt_time = 0.35
+		hud.register_damage(amount, source)
 		hud.play_sound(true)
 
 func _on_death() -> void:

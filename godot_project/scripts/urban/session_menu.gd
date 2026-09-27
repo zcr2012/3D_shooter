@@ -172,7 +172,7 @@ func close_menu() -> void:
 
 func _retry() -> void:
 	close_menu()
-	mission.restore_checkpoint()
+	mission.continue_checkpoint()
 
 func _restart() -> void:
 	close_menu()

@@ -1,11 +1,17 @@
 {
   "language": "zh-CN",
-  "source": "AI-synthesized speech with two voices selected by the user in this session",
+  "source": "AI-synthesized speech; three voices (command, Chen Mo, Shen Guodong) selected by the user in this session",
   "notice": "Not recordings of named real actors. Commercial use subject to generation service terms.",
+  "voices": {
+    "voice-00": "指挥中心 周岚",
+    "voice-01": "陈默",
+    "voice-02": "沈国栋"
+  },
   "clips": [
     {
       "id": "intro",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "这里是指挥中心。林舟，北码头的停电不是事故。证人陈默被困在九号仓库，他手里的运输记录，是我们找到失踪人员的唯一线索。先恢复通道，再带他平安回来。",
       "file": "godot_project/assets/audio/zh/intro.mp3",
@@ -15,6 +21,7 @@
     {
       "id": "checkpoint",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "门禁记录收到了。封锁命令在停电前六分钟就已下达，这不是临时处置。仓库外的中继箱正在向他们发送警报，切断上行，我来释放装卸门。",
       "file": "godot_project/assets/audio/zh/checkpoint.mp3",
@@ -24,6 +31,7 @@
     {
       "id": "relay",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "报警上行已切断，装卸门解锁。仓库使用独立应急电源，照明不会中断。陈默最后的位置在仓库深处，确认身份后立即带离。",
       "file": "godot_project/assets/audio/zh/relay.mp3",
@@ -33,6 +41,7 @@
     {
       "id": "rescue",
       "speaker": "陈默",
+      "chapter": 1,
       "voice": "voice-01",
       "text": "我叫陈默，是这里的调度员。清单上写着空箱，可我听见里面有人敲门。我把记录藏了起来，他们才没有立刻把我带走。警官，请相信我，那批货今晚还会转运。",
       "file": "godot_project/assets/audio/zh/rescue.mp3",
@@ -42,6 +51,7 @@
     {
       "id": "evidence",
       "speaker": "陈默",
+      "chapter": 1,
       "voice": "voice-01",
       "text": "记录就在这张存储卡里。名单和货柜编号能一一对应，还有今晚的转运地点。我不认识里面的人，但我不能装作什么都没听见。",
       "file": "godot_project/assets/audio/zh/evidence.mp3",
@@ -51,6 +61,7 @@
     {
       "id": "evac",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "撤离车辆已就位。林舟，别把陈默留在身后，两个人都进入接应区后再确认撤离。记录的备份正在上传，接应组会保护他的安全。",
       "file": "godot_project/assets/audio/zh/evac.mp3",
@@ -60,6 +71,7 @@
     {
       "id": "debrief",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "证人已接应，存储卡校验通过。运输记录指向今晚的一次转运，我们还有机会找到那些人。你带回来的不只是证据，也是一个愿意开口的人。",
       "file": "godot_project/assets/audio/zh/debrief.mp3",
@@ -69,11 +81,122 @@
     {
       "id": "reinforcements",
       "speaker": "指挥中心",
+      "chapter": 1,
       "voice": "voice-00",
       "text": "注意，街区南侧出现两名增援。借助车辆和路障逐段推进，先确认下一个掩体，再让陈默跟上。不要在开阔地停留。",
       "file": "godot_project/assets/audio/zh/reinforcements.mp3",
       "seconds": 11.624,
       "sha256": "0b01d5b86507cf1295a145e88510da867c9f27e765915c047f8e21b10fee8ab1"
+    },
+    {
+      "id": "yard_intro",
+      "speaker": "指挥中心",
+      "chapter": 2,
+      "voice": "voice-00",
+      "text": "林舟，堆场夜班在两小时前被全部遣散，理由是例行安保演练。签发人的名字我们还在查。CN 20437 在冷藏箱区，先拿下闸口，别让他们把箱子装上车。",
+      "file": "godot_project/assets/audio/zh/yard_intro.mp3",
+      "seconds": 17.868,
+      "sha256": "654f5bd9badf3c1b50f8c94e206c031d1826cc5cd9740b4d70a0d3a4ae6e559d"
+    },
+    {
+      "id": "yard_gate",
+      "speaker": "陈默",
+      "chapter": 2,
+      "voice": "voice-01",
+      "text": "警官，是我，陈默。指挥中心让我在线上帮你。堆场的巷道是按字母编的，冷藏箱区在 D 巷尽头。他们说的“例行演练”是假的——夜班从来不会全撤。",
+      "file": "godot_project/assets/audio/zh/yard_gate.mp3",
+      "seconds": 12.904,
+      "sha256": "6575efae0a6997e99ea2178b66d723d7950205be8e979f6a58b39e0dbd5622e5"
+    },
+    {
+      "id": "yard_office",
+      "speaker": "指挥中心",
+      "chapter": 2,
+      "voice": "voice-00",
+      "text": "调度记录到了。今天下午有人用港务局保安主管的权限改了 CN 20437 的堆位，签名是沈国栋——五点零六分下达封锁命令的也是他。林舟，箱子里的人还活着，去 D 巷。",
+      "file": "godot_project/assets/audio/zh/yard_office.mp3",
+      "seconds": 18.808,
+      "sha256": "01c982946a24fc96b61b9dbda92bdb2ad1f22c324a8bd62fe0198d9bfa90ed9f"
+    },
+    {
+      "id": "yard_container",
+      "speaker": "陈默",
+      "chapter": 2,
+      "voice": "voice-01",
+      "text": "箱门开了？里面有六个人……对，就是我在清单上看到的那六个“空箱”。警官，谢谢你没有把我的话当成疯话。让他们靠着箱壁坐下，接应组三分钟内到 D 巷。",
+      "file": "godot_project/assets/audio/zh/yard_container.mp3",
+      "seconds": 13.349,
+      "sha256": "34619f15bd2b84cff1eef64e091013717d205f74fc294e447174d73136decef4"
+    },
+    {
+      "id": "yard_intercept",
+      "speaker": "沈国栋",
+      "chapter": 2,
+      "voice": "voice-02",
+      "text": "所有人听着，堆场丢了一只箱子，无所谓。潮汐号零点整随潮离港，剩下的货已经在船上。守住三号泊位到零点，然后各自消失。",
+      "file": "godot_project/assets/audio/zh/yard_intercept.mp3",
+      "seconds": 12.121,
+      "sha256": "da08c7c2c86dc727c7f214cc656dc9c375228a91383124f2e52c07c04d1383f8"
+    },
+    {
+      "id": "yard_debrief",
+      "speaker": "指挥中心",
+      "chapter": 2,
+      "voice": "voice-00",
+      "text": "出口闸已封锁，六个人都活着，接应组接手。截获的对讲确认了：沈国栋在潮汐号上，零点随潮离港。港务局的离港许可我们无法远程撤销，必须有人上舷梯。林舟，下一站三号泊位。",
+      "file": "godot_project/assets/audio/zh/yard_debrief.mp3",
+      "seconds": 20.167,
+      "sha256": "240a34f2d84bf4b03ba6a7091b2ed979a474ab8d3fbbec4a05378092e362ca17"
+    },
+    {
+      "id": "pier_intro",
+      "speaker": "指挥中心",
+      "chapter": 3,
+      "voice": "voice-00",
+      "text": "林舟，三号泊位的陆侧已经封死，他们只剩海上这一条路。潮汐号四十分钟后满潮，许可一撤，引水员就不会登船。沿码头推进到舷梯，我们在你身后。",
+      "file": "godot_project/assets/audio/zh/pier_intro.mp3",
+      "seconds": 15.047,
+      "sha256": "15b7849f4539ce306b0a8c4f515f99996abc1054ad05053ce42753ea36bb4339"
+    },
+    {
+      "id": "pier_gate",
+      "speaker": "陈默",
+      "chapter": 3,
+      "voice": "voice-01",
+      "text": "警官，三号泊位我熟。岸吊底下有一排系缆桩，那是最好的掩体；舷梯在船尾方向，旁边就是港务终端。潮汐号的船员大多是被雇来的，真正的枪都在沈国栋身边。",
+      "file": "godot_project/assets/audio/zh/pier_gate.mp3",
+      "seconds": 14.655,
+      "sha256": "2e15024c1536233d12ca710a3986e12ef0dd6291d2b998ce07082d5ec8a0a33f"
+    },
+    {
+      "id": "pier_hold",
+      "speaker": "指挥中心",
+      "chapter": 3,
+      "voice": "voice-00",
+      "text": "岸吊区安全，接应组跟进到你身后。热成像看到船尾有两个人在解缆，他们想提前走。林舟，别等零点了，现在就上舷梯。",
+      "file": "godot_project/assets/audio/zh/pier_hold.mp3",
+      "seconds": 15.726,
+      "sha256": "cc6f730f93ac6c670c076c9cc70f68087eb698dd1d965edcb59aac292732ff90"
+    },
+    {
+      "id": "pier_terminal",
+      "speaker": "沈国栋",
+      "chapter": 3,
+      "voice": "voice-02",
+      "text": "林警官，你走到这里，说明你比我想的固执。可你撤不掉的东西还有很多——名单、船期、下一个港口。你救了七个人，剩下的呢？回去吧，天亮以后这里还是港口，还是我的港口。",
+      "file": "godot_project/assets/audio/zh/pier_terminal.mp3",
+      "seconds": 18.834,
+      "sha256": "3c6c3b3546664e64df55c355d968c5376a39b7289a54cfc461c26fd5474b9b9d"
+    },
+    {
+      "id": "pier_arrest",
+      "speaker": "指挥中心",
+      "chapter": 3,
+      "voice": "voice-00",
+      "text": "许可已撤销，引水员拒绝登船，潮汐号哪里也去不了。沈国栋已经控制，船上的十一个人全部找到。林舟，港口安静了——这次是我们让它安静的。回来吧，天快亮了。",
+      "file": "godot_project/assets/audio/zh/pier_arrest.mp3",
+      "seconds": 19.357,
+      "sha256": "74f9d4d4fa1edc0dc761c03137f2c8c14db055550bfafa1900e7ad36d4dc1c1a"
     }
   ]
 }

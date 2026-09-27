@@ -14,17 +14,28 @@ class ChineseChapterChecks(unittest.TestCase):
         lines=json.loads((ROOT/'godot_project/data/zh_dialogue.json').read_text(encoding='utf-8'))
         manifest=json.loads((ROOT/'godot_project/assets/audio/zh/manifest.json').read_text(encoding='utf-8'))
         self.assertEqual({c['id'] for c in manifest['clips']},set(lines))
-        self.assertEqual(len(lines),8)
+        self.assertEqual(len(lines),19)
+        self.assertEqual({c['chapter'] for c in manifest['clips']},{1,2,3})
+        self.assertEqual(set(manifest['voices']),{'voice-00','voice-01','voice-02'})
+        synthesized=0
         for clip in manifest['clips']:
             self.assertEqual(clip['text'],lines[clip['id']]['text'])
             self.assertEqual(clip['speaker'],lines[clip['id']]['speaker'])
+            self.assertIn(clip['voice'],manifest['voices'])
+            if clip['file'] is None:
+                # Text-only line: chapter_audio.speak() times the subtitle from its length instead.
+                self.assertEqual(clip['status'],'pending-synthesis')
+                self.assertFalse((ROOT/'godot_project/assets/audio/zh'/(clip['id']+'.mp3')).exists())
+                continue
+            synthesized+=1
             self.assertGreater(clip['seconds'],5)
             self.assertEqual(clip['sha256'],hashlib.sha256((ROOT/clip['file']).read_bytes()).hexdigest())
+        self.assertGreaterEqual(synthesized,18)
 
     def test_effects_are_real_pcm_files(self):
         base=ROOT/'godot_project/assets/audio/sfx'
         manifest=json.loads((base/'manifest.json').read_text(encoding='utf-8'))
-        self.assertEqual(len(manifest['files']),7)
+        self.assertEqual(len(manifest['files']),13)
         for file,digest in manifest['files'].items():
             self.assertEqual(digest,hashlib.sha256((ROOT/file).read_bytes()).hexdigest())
             with wave.open(str(ROOT/file)) as audio:
