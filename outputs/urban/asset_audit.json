@@ -1,0 +1,41 @@
+{
+  "FallArmed": {
+    "frames": 35,
+    "lowest_vertex_m": -8.754432201385498e-08,
+    "highest_vertex_m": 1.6475422382354736,
+    "non_finite_vertices": 0
+  },
+  "StrafeArmed": {
+    "frames": 25,
+    "lowest_vertex_m": -1.955777406692505e-08,
+    "highest_vertex_m": 1.6558195352554321,
+    "non_finite_vertices": 0
+  },
+  "assets": {
+    "contractor": {
+      "triangles": 29238,
+      "mesh_objects": 3
+    },
+    "fps_kit": {
+      "triangles": 5312,
+      "mesh_objects": 7
+    },
+    "witness": {
+      "triangles": 6244,
+      "mesh_objects": 3
+    }
+  },
+  "files": {
+    "godot_project/assets/urban/contractor.glb": "7ff024094ddbbff004fad850896061936dea33182f47792dd8911f2a9ca5edf2",
+    "outputs/urban/contractor.blend": "d859149f7d62b4575686a1fe329e144e2f0f64da328e29160294e03c6a49bab6",
+    "godot_project/assets/urban/fps_kit.glb": "516e021ac7f71b3e717091a05f09f7bd5fcab56a6f371948e81297617b90247c",
+    "outputs/urban/fps_kit.blend": "c87527f743efaa81fae859f4dcbcac39832e951a71a550b9cd7ebae4a299903c",
+    "godot_project/assets/urban/witness.glb": "e030d14829f7036d95ff283543f460bb4c5347f9d5d116f64d4ae83fa8369e51",
+    "outputs/urban/witness.blend": "c05198da76241a8ee3877a1dd9f04d630b7fe0dca5115613519ec5ffba9d23a7"
+  },
+  "limitations": [
+    "Only two new skeletal clips are sampled here; prior clips retain their v09 audit.",
+    "No skin self-intersection, foot IK, hand-to-magazine contact or performance certification.",
+    "FPS limbs and civilian legs use rigid pivots, not production anatomical rigs."
+  ]
+}

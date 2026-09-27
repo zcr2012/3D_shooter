@@ -57,10 +57,40 @@ class ProjectChecks(unittest.TestCase):
 
     def test_main_scene_and_baseline(self):
         text = (ROOT / 'godot_project/project.godot').read_text()
-        self.assertIn('run/main_scene="res://scenes/mission.tscn"', text)
+        self.assertIn('run/main_scene="res://scenes/urban_operation.tscn"', text)
         self.assertIn('renderer/rendering_method="gl_compatibility"', text)
         self.assertTrue((ROOT / 'godot_project/scenes/main.tscn').is_file())
         self.assertTrue((ROOT / 'outputs/v08/swat_visual_v08.blend').is_file())
+
+
+    def test_urban_asset_integrity(self):
+        fps = glb(ROOT / 'godot_project/assets/urban/fps_kit.glb')
+        names = {n.get('name') for n in fps['nodes']}
+        self.assertTrue({'LeftArm', 'RightArm', 'Magazine', 'Weapon'} <= names)
+        self.assertLessEqual(sum(len(m['primitives']) for m in fps['meshes']), 20)
+        for image in fps['images']:
+            self.assertIn('bufferView', image)
+        enemy = glb(ROOT / 'godot_project/assets/urban/contractor.glb')
+        self.assertIn('FallArmed', {a['name'] for a in enemy['animations']})
+        self.assertEqual(len(enemy['skins'][0]['joints']), 22)
+
+    def test_new_animation_audit(self):
+        audit = json.loads((ROOT / 'outputs/urban/asset_audit.json').read_text())
+        for name in ['FallArmed', 'StrafeArmed']:
+            self.assertEqual(audit[name]['non_finite_vertices'], 0)
+            self.assertGreater(audit[name]['lowest_vertex_m'], -.003)
+        for file, expected in audit['files'].items():
+            self.assertEqual(expected, hashlib.sha256((ROOT / file).read_bytes()).hexdigest())
+        self.assertLess(audit['assets']['fps_kit']['triangles'], 6000)
+        self.assertLess(audit['assets']['contractor']['triangles'], 32000)
+        self.assertLess(audit['assets']['witness']['triangles'], 7000)
+
+    def test_downloaded_texture_provenance(self):
+        manifest = json.loads((ROOT / 'third_party/polyhaven/manifest.json').read_text())
+        self.assertEqual(manifest['license'], 'CC0-1.0')
+        for item in manifest['files']:
+            self.assertEqual(item['sha256'], hashlib.sha256((ROOT / item['file']).read_bytes()).hexdigest())
+            self.assertIn('godotengine/godot-demo-projects/blob/', item['mirror_url'])
 
     def test_invalid_engine_path_fails_early(self):
         with patch.dict('os.environ', {'GODOT_BIN': str(ROOT / 'missing executable.exe')}):

@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="SWAT 3D Shooter"
-config/description="Third-person tactical shooter prototype. Assets authored in Blender."
-run/main_scene="res://scenes/mission.tscn"
+config/description="Original first-person urban story slice. Assets authored in Blender."
+run/main_scene="res://scenes/urban_operation.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 

@@ -1,0 +1,207 @@
+{
+	"checks": [
+		{
+			"id": "briefing.safe",
+			"passed": true
+		},
+		{
+			"id": "fps.camera_at_eye",
+			"passed": true
+		},
+		{
+			"id": "fps.third_person_body_hidden",
+			"passed": true
+		},
+		{
+			"id": "fps.authored_viewmodel",
+			"passed": true
+		},
+		{
+			"id": "city.large_geometry",
+			"passed": true
+		},
+		{
+			"id": "city.static_batch_budget",
+			"passed": true
+		},
+		{
+			"id": "city.warehouse_locked",
+			"passed": true
+		},
+		{
+			"id": "briefing.interaction_blocked",
+			"passed": true
+		},
+		{
+			"id": "deployment.first_group_only",
+			"passed": true
+		},
+		{
+			"id": "objectives.cannot_skip_remote",
+			"passed": true
+		},
+		{
+			"id": "objectives.cannot_skip_contacts",
+			"passed": true
+		},
+		{
+			"id": "enemy.new_fall_clip",
+			"passed": true
+		},
+		{
+			"id": "enemy.fall_animation_imported",
+			"passed": true
+		},
+		{
+			"id": "enemy.death_removes_collision",
+			"passed": true
+		},
+		{
+			"id": "checkpoint.unlocked_by_terminal",
+			"passed": true
+		},
+		{
+			"id": "checkpoint.next_group_active",
+			"passed": true
+		},
+		{
+			"id": "fps.ads_changes_fov",
+			"passed": true
+		},
+		{
+			"id": "fps.ads_aligns_weapon",
+			"passed": true
+		},
+		{
+			"id": "crouch.lowers_camera_and_capsule",
+			"passed": true
+		},
+		{
+			"id": "crouch.restores_standing",
+			"passed": true
+		},
+		{
+			"id": "fps.reload_moves_magazine",
+			"passed": true
+		},
+		{
+			"id": "fps.reload_moves_support_hand",
+			"passed": true
+		},
+		{
+			"id": "fps.reload_does_not_grant_early_ammo",
+			"passed": true
+		},
+		{
+			"id": "fps.reload_completes_atomically",
+			"passed": true
+		},
+		{
+			"id": "fps.eye_ray_damage",
+			"passed": true
+		},
+		{
+			"id": "fps.near_wall_blocks_bullet",
+			"passed": true
+		},
+		{
+			"id": "enemy.wall_blocks_vision",
+			"passed": true
+		},
+		{
+			"id": "crouch.stand_checks_obstruction",
+			"passed": true
+		},
+		{
+			"id": "enemy.clear_los",
+			"passed": true
+		},
+		{
+			"id": "crouch.clear_space_can_stand",
+			"passed": true
+		},
+		{
+			"id": "supplies.one_use",
+			"passed": true
+		},
+		{
+			"id": "supplies.reserve_and_health_only",
+			"passed": true
+		},
+		{
+			"id": "relay.opens_interior",
+			"passed": true
+		},
+		{
+			"id": "interior.two_contacts",
+			"passed": true
+		},
+		{
+			"id": "witness.rescue_starts_escort",
+			"passed": true
+		},
+		{
+			"id": "reinforcements.two_telegraphed_contacts",
+			"passed": true
+		},
+		{
+			"id": "escort.route_reaches_extraction",
+			"passed": true
+		},
+		{
+			"id": "escort.route_avoids_inflated_obstacles",
+			"passed": true
+		},
+		{
+			"id": "escort.actually_moves",
+			"passed": true
+		},
+		{
+			"id": "extraction.waits_for_witness",
+			"passed": true
+		},
+		{
+			"id": "extraction.wins_with_witness",
+			"passed": true
+		},
+		{
+			"id": "story.ten_contacts_total",
+			"passed": true
+		},
+		{
+			"id": "completion.blocks_shooting",
+			"passed": true
+		},
+		{
+			"id": "restart.fresh_story",
+			"passed": true
+		},
+		{
+			"id": "urban_ai.acquisition_delay",
+			"passed": true
+		},
+		{
+			"id": "urban_ai.autonomous_fire",
+			"passed": true
+		},
+		{
+			"id": "death.fails_and_stops_ai",
+			"passed": true
+		}
+	],
+	"engine": {
+		"build": "custom_build",
+		"hash": "unknown",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (custom_build)",
+		"timestamp": 0
+	},
+	"failure_count": 0,
+	"static_batches": 12,
+	"static_instances": 643,
+	"status": "PASS"
+}

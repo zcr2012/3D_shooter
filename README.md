@@ -1,76 +1,70 @@
-# SWAT 战术射击 · Sector Nine（v09）
+# Sector Nine · 寂静港口 / Silent Harbor
 
-以战术射击为方向的 **Godot 4 单机原型与程序化资产工程**。v09 在 v08 角色上追加细节与网格清理，并加入可重复游玩的仓库遭遇战；不是商业写实成品。
+Godot 4 第一人称城市战术射击**开发切片**，使用原创 Blender 模型及许可明确的免费材质。当前制作一个可重复试玩的首关，**不是商业级成品或完整多章节战役**。
 
-**开始：** 用 Godot 4.6.3 导入 `godot_project/project.godot`，按 F5，点击 DEPLOY。
-详见 [操作、Windows/Linux 工具链与已知限制](docs/PLAY.md) 和 [本轮实际验证记录](docs/VALIDATION.md)。
+## 开始试玩
 
-## v09 新增
+用 **Godot 4.6.3** 打开 `godot_project/project.godot`，等待资源导入，点击右上角 **▶**，再点击 **DEPLOY**。
+笔记本可使用 **Fn + F5**。运行游戏不需要安装 Blender。
 
-- 四名敌人的巡逻、视线检测、预警、射击、受击与清除；清场后撤离、死亡失败、结算重开。
-- 相机准星射线 + 枪口遮挡检查、血量、有限弹药、一次性补给、光迹/命中反馈及合成音效。
-- 简报与结算界面、准星、雷达、任务状态、血量/弹药/换弹进度 HUD。
-- v09 角色：头盔缝线/麦克风、面罩细节、护膝绑带、靴口与装备缝线；退化面清理。
-- `tools/project.py` 统一 Windows/Linux 运行、验证、建模和 Windows 导出；默认 Compatibility 渲染。
-- v08 交付目录和旧 `main.tscn` 验证场景保留不覆盖；实际游玩入口为 `mission.tscn`。
+- [城市首关操作、剧情、流程与限制](docs/URBAN_CHAPTER.md)
+- [本轮实际验证结果](docs/URBAN_VALIDATION.md)
+- [Windows / Linux 工具链及导出说明](docs/PLAY.md)
 
-## 交付内容
+## 本轮已实现
 
-| 类别 | 内容 |
-| --- | --- |
-| 角色 | 现代特警（头盔 / 面罩 / MOLLE 背心 / 织带 / 弹匣袋 / 电台 / 水袋 / 战术靴），22 骨骼可绑定骨架 |
-| 武器 | AR 突击步枪（可分离弹匣、皮卡汀尼导轨、伸缩枪托、光学瞄准具） |
-| 场景 | 室内战术环境（混凝土 / 瓷砖 / 金属 / 木质等 PBR 材质） |
-| 动作 | 7 个分层动作：Idle、Aim、Fire、Reload、Walk、Run、HitReact，30fps 逐帧烘焙 |
-| 材质 | 程序化 PBR 图集（BaseColor / ORM / Normal，8 图块） |
+- 约 **92 × 140 米**地图边界，中央街区与可进入的仓库；两侧楼体主要是不可进入的背景建筑。
+- 四段任务：**封锁线 → 切断中继 → 营救线人 → 护送撤离**，共 10 名敌人，按阶段激活。
+- 原创停电调查剧情、位置触发电台字幕、目标方向/距离、一次性弹药和医疗补给。
+- 第一人称独立手臂/枪械，ADS、后坐力、近墙压枪、换弹部件运动、Ctrl 蹲下及头顶站起检查。
+- 敌人暖棕制服版本，沿用旧骨骼动作，新增横移和倒地动画；平民模型使用静态障碍网格寻路护送。
+- Compatibility 渲染、静态建筑材质合批、512px 城市纹理，F6 可关闭太阳阴影。尚未获得核显实测帧率。
 
-## 仓库结构
+**操作：** WASD 移动，鼠标观察，左键单发，右键瞄准，R 换弹，Shift 冲刺，Ctrl 蹲下，Space 跳跃，E 交互，Enter 部署/重开。Esc 仅释放鼠标，**不暂停战斗**。
 
-```
-3D_shooter/
-├── godot_project/           # Godot 4 验证工程（主入口）
-│   ├── scenes/main.tscn
-│   ├── scripts/             # player.gd 等运行时逻辑
-│   └── tools/               # 回归验证 / 截图脚本
-├── outputs/v09/             # 当前源工程、网格审计与实际检查渲染
-├── tools/project.py         # 跨平台统一入口
-├── tests/                   # Python 资产/工具完整性检查
-├── docs/PLAY.md             # 操作、构建与验证边界
-├── outputs/v08/             # 保留的原始资产交付
-│   ├── swat_visual_v08.blend    # Blender 源工程
-│   ├── texture_sources/         # PBR 贴图源文件
-│   ├── godot_project/           # 隔离验证副本
-│   ├── v08_*.png                # 渲染验证图
-│   └── visual_audit.json        # 逐帧几何审计报告
-└── scripts/                 # 程序化构建流水线（Blender 后台脚本）
+## 工程结构
+
+```text
+godot_project/
+  scenes/urban_operation.tscn   # 当前默认首关
+  scripts/urban/               # 城市、FPS、分阶段剧情、敌人、HUD
+  assets/urban/                # 三个新 GLB 和贴图
+  scenes/mission.tscn          # 保留的 v09 第三人称仓库关
+  scenes/main.tscn             # 旧动作回归场景
+  tools/verify_urban.gd        # 新关引擎测试
+outputs/urban/                # Blender 源文件、模型预览、审计与测试报告
+outputs/v09/                  # 保留的旧角色源文件和回归报告
+outputs/v08/                  # 保留的原始交付
+scripts/                     # Blender 生成、审计和预览脚本
+third_party/polyhaven/        # CC0 原图、来源、固定镜像版本与哈希
+tools/project.py             # 跨平台运行、验证、建模与 Windows 导出
 ```
 
-## 运行方法
+## 验证与制作
 
-1. 安装 [Godot 4.x](https://godotengine.org/download)（本项目验证于 Godot 4.6）
-2. 用 Godot 导入 `godot_project/project.godot`
-3. 按 F5 运行任务场景 `scenes/mission.tscn`；`scenes/main.tscn` 仅作旧动作回归夹具。
+设置 `GODOT_BIN` / `BLENDER_BIN`，或将程序放入 PATH。
 
-操控：WASD 移动、鼠标转视角、右键瞄准、左键单发、R 换弹、Shift 跑动、E 补给、Space 物理跳跃、Esc 释放鼠标。
+```text
+python tools/project.py run
+python tools/project.py verify
+python -m unittest discover -s tests -v
+python tools/project.py model-urban
+python tools/project.py audit-urban
+python tools/project.py render-urban
+python tools/project.py export-windows
+```
 
-## 质量控制
+重新生成模型需要 Blender 5.x，其 Python 环境须能导入 Pillow。Windows 导出还需要匹配版本的官方导出模板；本轮没有提供已验收的 exe。
+旧 `model` / `audit` / `render` 命令仍用于 v09，不覆盖其历史源文件。
 
-- 旧动作套件：动作时长 / 循环接缝 / 16 组 WASD 位移 / 分层动作 / 弹药逻辑 / 鼠标捕获。另增 `verify_gameplay.gd` 玩法回归。本轮重新运行：旧套件 374/374、新玩法 31/31 通过；报告保存在 `outputs/v09/`。
-- 逐帧网格审计：权重归一化误差 < 1e-7、无无效顶点、鞋底离地 < 3mm、刚性装备应变 < 0.3%
-- v09 三角形总数：29,842（角色 21,776、步枪 7,090、弹匣 976）；具体统计见 `outputs/v09/visual_audit.json`。目标硬件性能尚未验收。
+**当前实际结果：** 374 项旧动作回归、31 项旧玩法回归、47 项城市首关回归、9 项 Python 检查通过；两段新骨骼动画采样 60 帧。详情和验证边界见 [验证记录](docs/URBAN_VALIDATION.md)。
 
-## 技术栈
+## 质量边界
 
-- **Blender 5.x**（后台脚本化建模 / 绑定 / PBR / 渲染，见 `scripts/`）
-- **Godot 4.6**（双层动画播放器、WASD 摄像机相对移动、鼠标捕获）
-- **glTF 2.0 / GLB**（单骨架多动作导出）
+美术仍偏简化。FPS 手臂和线人腿部采用刚性枢轴，尚无完整手指骨骼、动作捕捉、专业音效/配音、过场、协同掩体 AI、多章节战役或中途存档。未完成新关的 Windows 图形试玩、GPU 帧率、声音试听和全部穿插验收。
 
-## 已知限制
-
-- 手指为握持姿态建模，未单独关节化
-- 布料与装备壳体间的重叠穿插未自动校验
-- 平地样本测试未覆盖斜坡 IK 与全部混合状态
+`outputs/urban/fps_preview.png` 是 Blender 离线模型预览，**不是 Godot 游戏截图**。旧版成功运行和自动化检查不等于新版已经达到商业发行质量。
 
 ## 许可
 
-MIT License，见 [LICENSE](LICENSE)。
+工程代码及原创资产沿用 [MIT License](LICENSE)。新增外部布料贴图为 **Poly Haven CC0**，具体文件和处理记录见 [第三方资源说明](third_party/polyhaven/README.md)。不包含《使命召唤》或其他商业游戏的模型、贴图、角色或剧情资产。

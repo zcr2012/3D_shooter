@@ -52,7 +52,7 @@ def godot(*args):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['doctor', 'import', 'run', 'verify', 'model', 'audit', 'render', 'export-windows'])
+    parser.add_argument('command', choices=['doctor', 'import', 'run', 'verify', 'model', 'audit', 'render', 'model-urban', 'audit-urban', 'render-urban', 'export-windows'])
     options = parser.parse_args(argv)
     if options.command == 'doctor':
         for engine in ['godot', 'blender']:
@@ -64,11 +64,21 @@ def main(argv=None):
         godot()
     elif options.command == 'verify':
         godot('--headless', '--editor', '--import')
-        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd']:
+        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd']:
             godot('--headless', '--script', 'res://tools/' + suite)
         destination = ROOT / 'outputs/v09/motion_verification.json'
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / 'outputs/production_motion_verification.json', destination)
+    elif options.command in ['model-urban', 'audit-urban', 'render-urban']:
+        scripts = {
+            'model-urban': ['build_urban_assets.py', 'build_urban_enemy.py',
+                            'build_urban_witness.py', 'audit_urban_assets.py'],
+            'audit-urban': ['audit_urban_assets.py'],
+            'render-urban': ['render_urban_fps.py'],
+        }[options.command]
+        for script in scripts:
+            run([executable('blender'), '-b', '--python-exit-code', '1',
+                 '-P', ROOT / 'scripts' / script])
     elif options.command in ['model', 'audit', 'render']:
         script, source = {
             'model': ('polish_v09.py', 'v08/swat_visual_v08.blend'),
