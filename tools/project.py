@@ -42,26 +42,57 @@ def executable(name):
     raise SystemExit(f'{name} not found. Install it or set {name.upper()}_BIN. See docs/PLAY.md.')
 
 
-def run(args):
+SUITES = ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd',
+          'verify_chapter_zh.gd', 'verify_session.gd']
+
+
+def annotate(level, title, text):
+    """GitHub annotations are the only CI channel readable without log/artifact downloads."""
+    if not os.environ.get('GITHUB_ACTIONS') or not text:
+        return
+    for start in range(0, min(len(text), 7500), 2500):
+        detail = text[start:start+2500].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+        print(f'::{level} title={title}::' + detail, flush=True)
+
+
+def execute(args, timeout=240):
+    """Run one engine command; return (failed, output). Never raises on engine failure."""
     print('>', subprocess.list2cmdline([str(a) for a in args]), flush=True)
     try:
-        result = subprocess.run([str(a) for a in args], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=240)
+        result = subprocess.run([str(a) for a in args], cwd=ROOT, capture_output=True, text=True,
+                                encoding='utf-8', errors='replace', timeout=timeout)
         output = result.stdout + result.stderr
-        failed = result.returncode != 0 or 'SCRIPT ERROR:' in output or '\nERROR:' in output
+        failed = result.returncode != 0 or 'SCRIPT ERROR:' in output or '\nERROR:' in output \
+            or output.startswith('ERROR:')
     except subprocess.TimeoutExpired as error:
-        output = (error.stdout or b'').decode('utf-8', errors='replace') + (error.stderr or b'').decode('utf-8', errors='replace')
-        output += '\nCommand exceeded 240 seconds.'
+        def text(value):
+            return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else (value or '')
+        output = text(error.stdout) + text(error.stderr) + f'\nCommand exceeded {timeout} seconds.'
         failed = True
     print(output, flush=True)
+    return failed, re.sub(r'\x1b\[[0-9;]*m', '', output)
+
+
+def diagnostics(output):
+    tags = ['ERROR', 'Error', ' at:', 'GDScript', '[FAIL]', 'exceeded', 'watchdog']
+    selected = [line.strip() for line in output.splitlines() if any(tag in line for tag in tags)]
+    unique = list(dict.fromkeys(selected))
+    return '\n'.join(unique) if unique else output[-3000:]
+
+
+def summary(output):
+    passed = len(re.findall(r'^\[PASS\]', output, re.M))
+    failed = len(re.findall(r'^\[FAIL\]', output, re.M))
+    lines = [line.strip() for line in output.splitlines()
+             if re.search(r'\d+ checks?, \d+ failures?|MOTION (PASS|FAIL)', line)]
+    counted = f'[PASS]x{passed} [FAIL]x{failed}' if passed or failed else ''
+    return ' | '.join(filter(None, [counted] + lines[-2:]))
+
+
+def run(args):
+    failed, output = execute(args)
     if failed:
-        if os.environ.get('GITHUB_ACTIONS'):
-            clean = re.sub(r'\x1b\[[0-9;]*m', '', output)
-            lines = clean.splitlines()
-            selected = [line for line in lines if any(tag in line for tag in ['ERROR', 'Error', ' at:', 'GDScript', '[FAIL]', 'exceeded'])]
-            diagnostic = '\n'.join(selected) if selected else clean[-3000:]
-            for start in range(0, len(diagnostic), 2500):
-                detail = diagnostic[start:start+2500].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                print('::error::' + detail, flush=True)
+        annotate('error', 'engine', diagnostics(output))
         raise SystemExit(1)
 
 
@@ -82,12 +113,41 @@ def main(argv=None):
     elif options.command == 'run':
         godot()
     elif options.command == 'verify':
-        godot('--headless', '--editor', '--import')
-        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd', 'verify_chapter_zh.gd', 'verify_session.gd']:
-            godot('--headless', '--script', 'res://tools/' + suite)
-        destination = ROOT / 'outputs/v09/motion_verification.json'
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(ROOT / 'outputs/production_motion_verification.json', destination)
+        # Run every suite even after a failure (except parse errors), so one CI round exposes all regressions.
+        engine = executable('godot')
+        failures = []
+        failed, output = execute([engine, '--path', PROJECT, '--headless', '--editor', '--import'])
+        if failed:
+            failures.append('import')
+            annotate('error', 'import', diagnostics(output))
+        parse_error = ''
+        for suite in SUITES:
+            if parse_error:
+                # A GDScript parse error makes later suites hang until their watchdog
+                # (4 min each) and report the same cascade; stop and point at the cause.
+                print(f'SUITE {suite}: SKIPPED after parse error', flush=True)
+                failures.append(suite)
+                continue
+            failed, output = execute([engine, '--path', PROJECT, '--headless', '--script', 'res://tools/' + suite])
+            line = summary(output) or ('no summary line' if failed else 'completed')
+            print(f'SUITE {suite}: {"FAIL" if failed else "PASS"} {line}', flush=True)
+            if failed:
+                failures.append(suite)
+                annotate('error', suite, (line + '\n' + diagnostics(output)).strip())
+                found = re.search(r'Parse Error: .*|at: GDScript::reload \(res://[^)]+\)', output)
+                if 'Parse Error' in output and found:
+                    parse_error = found.group(0)
+            else:
+                annotate('notice', suite, 'PASS ' + line)
+        motion = ROOT / 'outputs/production_motion_verification.json'
+        if motion.is_file():
+            destination = ROOT / 'outputs/v09/motion_verification.json'
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(motion, destination)
+        if failures:
+            print('FAILED:', ', '.join(failures), flush=True)
+            raise SystemExit(1)
+        print('All engine suites passed.', flush=True)
     elif options.command in ['model-urban', 'audit-urban', 'render-urban']:
         scripts = {
             'model-urban': ['build_urban_assets.py', 'build_urban_enemy.py',

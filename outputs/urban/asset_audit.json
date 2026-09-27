@@ -21,8 +21,39 @@
       "mesh_objects": 7
     },
     "witness": {
-      "triangles": 6244,
-      "mesh_objects": 3
+      "triangles": 5304,
+      "mesh_objects": 1,
+      "bones": 17
+    }
+  },
+  "witness_clips": {
+    "Captive": {
+      "frames": 49,
+      "lowest_vertex_m": 0.0020267218351364136,
+      "highest_lowest_vertex_m": 0.010026738047599792,
+      "highest_vertex_m": 1.3966755867004395,
+      "non_finite_vertices": 0
+    },
+    "Idle": {
+      "frames": 73,
+      "lowest_vertex_m": -0.008499746210873127,
+      "highest_lowest_vertex_m": -0.0015715109184384346,
+      "highest_vertex_m": 1.801834225654602,
+      "non_finite_vertices": 0
+    },
+    "Jog": {
+      "frames": 25,
+      "lowest_vertex_m": -0.01533568650484085,
+      "highest_lowest_vertex_m": 0.027097266167402267,
+      "highest_vertex_m": 1.7952708005905151,
+      "non_finite_vertices": 0
+    },
+    "Plead": {
+      "frames": 73,
+      "lowest_vertex_m": 1.1175870895385742e-08,
+      "highest_lowest_vertex_m": 1.1175870895385742e-08,
+      "highest_vertex_m": 1.8047161102294922,
+      "non_finite_vertices": 0
     }
   },
   "files": {
@@ -30,12 +61,13 @@
     "outputs/urban/contractor.blend": "d859149f7d62b4575686a1fe329e144e2f0f64da328e29160294e03c6a49bab6",
     "godot_project/assets/urban/fps_kit.glb": "516e021ac7f71b3e717091a05f09f7bd5fcab56a6f371948e81297617b90247c",
     "outputs/urban/fps_kit.blend": "c87527f743efaa81fae859f4dcbcac39832e951a71a550b9cd7ebae4a299903c",
-    "godot_project/assets/urban/witness.glb": "e030d14829f7036d95ff283543f460bb4c5347f9d5d116f64d4ae83fa8369e51",
-    "outputs/urban/witness.blend": "c05198da76241a8ee3877a1dd9f04d630b7fe0dca5115613519ec5ffba9d23a7"
+    "godot_project/assets/urban/witness.glb": "0f237a6953ba1617da327e7b8b3a8835c354a6fb9ca9765c58e441afc99d1e7f",
+    "outputs/urban/witness.blend": "202c2bc7907061b479df55876a4c0a35e3aca418a261ef5d12fa52cc5cb66fbd"
   },
   "limitations": [
     "Only two new skeletal clips are sampled here; prior clips retain their v09 audit.",
     "No skin self-intersection, foot IK, hand-to-magazine contact or performance certification.",
-    "FPS limbs and civilian legs use rigid pivots, not production anatomical rigs."
+    "FPS limbs use rigid pivots, not production anatomical rigs.",
+    "Witness is a stylised procedural low-poly skinned mesh with automatic weights: no facial rig, fingers or cloth simulation."
   ]
 }

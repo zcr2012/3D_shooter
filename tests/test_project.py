@@ -63,6 +63,27 @@ class ProjectChecks(unittest.TestCase):
         self.assertTrue((ROOT / 'outputs/v08/swat_visual_v08.blend').is_file())
 
 
+    def test_no_inferred_type_from_untyped_member(self):
+        # Godot 4.6 rejects `var x := member...` when `member` has no static type
+        # (the session_store.gd:118 CI blocker). Follows `extends "res://..."` chains.
+        import re
+        root = ROOT / 'godot_project'
+
+        def untyped(path):
+            text = path.read_text(encoding='utf-8')
+            names = set(re.findall(r'^var (\w+)\s*(?:=(?!=).*)?$', text, re.M))
+            parent = re.search(r'^extends "res://(.+?)"', text, re.M)
+            return names | (untyped(root / parent.group(1)) if parent else set())
+
+        offenders = []
+        for path in root.rglob('*.gd'):
+            names = untyped(path)
+            for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+                match = re.match(r'\s*var \w+\s*:=\s*(\w+)\s*([.\[]|$)', line)
+                if match and match.group(1) in names:
+                    offenders.append(f'{path.relative_to(ROOT)}:{number}')
+        self.assertEqual(offenders, [])
+
     def test_urban_asset_integrity(self):
         fps = glb(ROOT / 'godot_project/assets/urban/fps_kit.glb')
         names = {n.get('name') for n in fps['nodes']}
@@ -73,6 +94,13 @@ class ProjectChecks(unittest.TestCase):
         enemy = glb(ROOT / 'godot_project/assets/urban/contractor.glb')
         self.assertIn('FallArmed', {a['name'] for a in enemy['animations']})
         self.assertEqual(len(enemy['skins'][0]['joints']), 22)
+        witness = glb(ROOT / 'godot_project/assets/urban/witness.glb')
+        self.assertEqual({a['name'] for a in witness['animations']}, {'Captive', 'Idle', 'Jog', 'Plead'})
+        self.assertEqual(len(witness['skins']), 1)
+        self.assertEqual(len(witness['skins'][0]['joints']), 17)
+        self.assertLessEqual(sum(len(m['primitives']) for m in witness['meshes']), 13)
+        materials = {m['name'] for m in witness['materials']}
+        self.assertTrue({'Dock uniform', 'Denim', 'Hi-vis vest', 'Skin'} <= materials)
 
     def test_new_animation_audit(self):
         audit = json.loads((ROOT / 'outputs/urban/asset_audit.json').read_text())
@@ -84,6 +112,10 @@ class ProjectChecks(unittest.TestCase):
         self.assertLess(audit['assets']['fps_kit']['triangles'], 6000)
         self.assertLess(audit['assets']['contractor']['triangles'], 32000)
         self.assertLess(audit['assets']['witness']['triangles'], 7000)
+        self.assertEqual(audit['assets']['witness']['bones'], 17)
+        for name, clip in audit['witness_clips'].items():
+            self.assertEqual(clip['non_finite_vertices'], 0, name)
+            self.assertGreater(clip['lowest_vertex_m'], -.035, name)
 
     def test_downloaded_texture_provenance(self):
         manifest = json.loads((ROOT / 'third_party/polyhaven/manifest.json').read_text())

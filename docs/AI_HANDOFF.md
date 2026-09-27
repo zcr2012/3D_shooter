@@ -11,18 +11,21 @@
 - 不能将合成配音/程序音效说成专业演员棚录，不能以无头测试代替画面、听审或用户硬件帧率验收。
 - 用户曾对较早 Windows 试玩版反馈良好，但没有验收最新暂停/存档版本。
 
-## 本次交接的实际状态
-- 功能代码提交到 `d520f79`（之后的交接提交只增加说明文件）。用户明确要求将当前开发进度合并 main，供另一位 AI 接手。
-- **当前有已知启动阻断，尚未完成交付验收。** Windows/Linux 官方 Godot 4.6.3 CI 都失败。
-- 最新已检查 CI：https://github.com/zcr2012/3D_shooter/actions/runs/36291538199
-- 两个平台的确切错误相同：
-  `SCRIPT ERROR: Parse Error: Cannot infer the type of "path" variable because the value doesn't have a set type.`
-  `res://scripts/urban/session_store.gd:118`
-  导致 `operation.gd` 依赖编译失败，城市首关脚本无法加载。
-- 优先把 `clear_checkpoint()` 内 `var path := directory+"checkpoint.json"+suffix` 改为显式 String（同时检查其他 Variant 推断），然后重新跑全套。此提示只是已定位问题，不意味着改一行就全部通过。
-- 本地最新 Python 完整性测试 16 项通过；字体覆盖审计 423 个非 ASCII 字符，0 缺字。新存档/暂停专项尚未跑通。
-- 较早基线结果：动作374、旧玩法31、城市47、中文33项通过。它们发生在新增暂停/存档代码之前，不能作为当前版本结果。
-- Windows 试玩包与 Linux 实际渲染截图工作流已经写入，但最新 CI 在导入阶段失败，后续导出/截图被跳过。**没有可声称已成功交付的最新包或截图。**
+## 本次交接的实际状态（2026-09-27 更新）
+- 分支 `arena/01a0e0e4-3d-shooter` 已修复原 CI 阻断（`session_store.gd:118` 类型推断），并继续修复后续暴露的问题。
+- 最新 CI（官方 Godot 4.6.3，Windows + Linux）五套引擎回归共 573 项检查通过：session 88、chapter_zh 33、urban 47、
+  gameplay 31、production motion 374；Python 17 项通过；Windows 导出包无头冒烟启动通过；11 张兼容渲染器真实截图以 `preview/*` check-run 附在提交上。
+  以你接手时该分支最新提交的 CI 为准，不要只信本段文字。
+- 详细覆盖与限制见 `docs/CHAPTER_ZH_VALIDATION.md`。
+- 证人陈默已替换为 Blender 程序化生成的蒙皮角色（17 骨骼，4 个动作），见 `scripts/build_urban_witness.py`。
+
+## 工具提示（沙箱内无法下载 Godot 时）
+- PyPI `bpy==4.5.0` 可在 venv 中无头运行 Blender 脚本；若缺 X11/GL 系统库，可用空桩 `.so` 并以
+  `sys.setdlopenflags(os.RTLD_LAZY|os.RTLD_GLOBAL)` 导入。EEVEE 不可用，预览用 Cycles CPU。
+  用 `runpy.run_path('scripts/xxx.py', run_name='__main__')` 运行（脚本依赖 `__file__`）。
+- 修改证人后依次运行 `build_urban_witness.py`、`audit_urban_assets.py`（更新 `outputs/urban/asset_audit.json` 哈希），再跑 unittest。
+- Godot 4.6 对 `var x := 未声明类型成员...` 报解析错误；`tests/test_project.py` 有静态扫描，但不能替代真实引擎。
+- 截图：`gh api repos/<repo>/check-runs/<id> --jq '.output.summary + .output.text' | tr -d ' \n' | base64 -d > x.jpg`。
 
 ## 已有实现
 - 中文 HUD/剧情/场景标识，内置 Noto Sans CJK 与 OFL/来源。
@@ -30,13 +33,13 @@
 - 三段程序运镜过场，可跳过；没有完整口型动画。
 - 城市建筑/仓库、第一人称枪械手臂、敌人与证人；几何细节与批量静态绘制，美术仍需真实画面评审。
 - AI 视野/声音/队友警戒、掩体占用、换弹、友军射线阻挡、阻塞释放。
-- 新增（未通过完整引擎回归）：Esc 真正暂停 SceneTree/声音，失焦暂停，设置界面；阶段入口检查点、C继续、死亡重试；设置/存档 JSON 验证、tmp/bak替换。
+- 已通过引擎回归：Esc 真正暂停 SceneTree/声音，失焦暂停，设置界面；阶段入口检查点、C继续、死亡重试；设置/存档 JSON 验证、tmp/bak替换。
 - 检查点重试重建玩家/本阶段敌人，保留已用补给与弹匣；最低60生命、30备弹，避免缺弹卡关。不是任意时刻快速存档。
-- 护送新增 H 等待/跟随、靠近障碍的目标点修正与路径起点剪裁。需要验证实际护送不卡住。
+- 护送新增 H 等待/跟随、靠近障碍的目标点修正与路径起点剪裁。CI 中完整护送路线已验证不卡住并成功撤离；仍需真人游玩验收。
 
 ## 重点文件
 - `godot_project/scripts/urban/operation.gd`：剧情、过场、阶段流程、存档恢复、护送。
-- `session_store.gd`：存档校验/磁盘读写（当前解析错误在这里）。
+- `session_store.gd`：存档校验/磁盘读写（tmp/bak 原子替换）。
 - `session_menu.gd`：暂停设置与失焦处理。
 - `urban_hud.gd`：中文界面、字幕、检查点提示。
 - `chapter_audio.gd`：配音/环境/音效与暂停。
