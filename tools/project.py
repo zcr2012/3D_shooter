@@ -43,7 +43,20 @@ def executable(name):
 
 def run(args):
     print('>', subprocess.list2cmdline([str(a) for a in args]), flush=True)
-    subprocess.run([str(a) for a in args], cwd=ROOT, check=True)
+    try:
+        result = subprocess.run([str(a) for a in args], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=240)
+        output = result.stdout + result.stderr
+        failed = result.returncode != 0 or 'SCRIPT ERROR:' in output or '\nERROR:' in output
+    except subprocess.TimeoutExpired as error:
+        output = (error.stdout or b'').decode('utf-8', errors='replace') + (error.stderr or b'').decode('utf-8', errors='replace')
+        output += '\nCommand exceeded 240 seconds.'
+        failed = True
+    print(output, flush=True)
+    if failed:
+        if os.environ.get('GITHUB_ACTIONS'):
+            detail = output[-18000:].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+            print('::error::' + detail, flush=True)
+        raise SystemExit(1)
 
 
 def godot(*args):

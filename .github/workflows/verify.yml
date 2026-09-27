@@ -1,5 +1,7 @@
 name: Godot regression
 on: [push, pull_request, workflow_dispatch]
+env:
+  PYTHONUTF8: '1'
 permissions:
   contents: read
 jobs:
@@ -35,7 +37,15 @@ jobs:
           with open(os.environ['GITHUB_ENV'], 'a') as env:
               env.write(f'GODOT_BIN={executable}\n')
       - name: Integrity tests
-        run: python -m unittest discover -s tests -v
+        shell: python
+        run: |
+          import subprocess, sys
+          result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v'], capture_output=True, text=True)
+          print(result.stdout + result.stderr)
+          if result.returncode:
+              message = (result.stdout + result.stderr)[-10000:].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print('::error::' + message)
+          sys.exit(result.returncode)
       - name: Import and headless regression
         run: python tools/project.py verify
       - uses: actions/upload-artifact@v4
@@ -48,3 +58,48 @@ jobs:
             outputs/urban/engine_verification.json
             outputs/zh_chapter/verification.json
             outputs/release/session_verification.json
+      - name: Render actual game frames with Mesa
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri
+          LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a "$GODOT_BIN" --path godot_project --rendering-method gl_compatibility --audio-driver Dummy --script tools/capture_chapter.gd
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
+        with:
+          name: chapter-rendered-screenshots
+          path: outputs/release/screenshots/*.png
+      - name: Install verified official export templates and export Windows build
+        if: runner.os == 'Windows'
+        shell: python
+        run: |
+          import hashlib, os, pathlib, shutil, subprocess, urllib.request, zipfile
+          asset = 'Godot_v4.6.3-stable_export_templates.tpz'
+          base = 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/'
+          archive = pathlib.Path(os.environ['RUNNER_TEMP']) / asset
+          urllib.request.urlretrieve(base + asset, archive)
+          sums = urllib.request.urlopen(base + 'SHA512-SUMS.txt').read().decode()
+          expected = next(line.split()[0] for line in sums.splitlines() if line.rstrip().endswith(asset))
+          assert hashlib.sha512(archive.read_bytes()).hexdigest() == expected
+          target = pathlib.Path(os.environ['APPDATA']) / 'Godot/export_templates/4.6.3.stable'
+          target.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(archive) as z:
+              for name in ['windows_release_x86_64.exe', 'windows_debug_x86_64.exe']:
+                  (target / name).write_bytes(z.read('templates/' + name))
+          destination = pathlib.Path('build/windows')
+          destination.mkdir(parents=True, exist_ok=True)
+          subprocess.run([os.environ['GODOT_BIN'], '--headless', '--path', 'godot_project', '--export-release', 'Windows Desktop'], check=True)
+          shutil.copy2('docs/WINDOWS_PLAYTEST.md', destination / '试玩说明.md')
+          shutil.copy2('LICENSE', destination / 'LICENSE.txt')
+          shutil.copytree('third_party', destination / 'licenses/third_party')
+          shutil.copytree('godot_project/assets/fonts', destination / 'licenses/fonts', ignore=shutil.ignore_patterns('*.otf', '*.import'))
+          shutil.copy2('godot_project/assets/audio/zh/manifest.json', destination / 'licenses/voice-manifest.json')
+          shutil.copy2('godot_project/assets/audio/sfx/manifest.json', destination / 'licenses/sfx-manifest.json')
+          exe = destination / 'SectorNine.exe'
+          (destination / 'SHA256.txt').write_text(hashlib.sha256(exe.read_bytes()).hexdigest() + '  SectorNine.exe\n')
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: SilentHarbor-Windows-x64
+          path: build/windows/
+          retention-days: 30
