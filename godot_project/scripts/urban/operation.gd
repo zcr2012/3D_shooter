@@ -382,18 +382,19 @@ func _on_shot(origin: Vector3, target: Vector3, confirmed: bool) -> void:
 
 func _refine_witness(node: Node) -> void:
 	# Fabric weave normal on the work shirt and trousers; authored colours are kept.
+	# The imported materials belong only to witness.glb, so they are configured in place
+	# (idempotent): several surface overrides on one skinned mesh trigger Godot issue
+	# #85817 ("Parameter material is null") when the witness is freed.
 	if node is MeshInstance3D:
 		for i in node.mesh.get_surface_count():
-			var source = node.mesh.surface_get_material(i)
-			if source is StandardMaterial3D and ("uniform" in source.resource_name.to_lower() or "denim" in source.resource_name.to_lower()):
-				var cloth: StandardMaterial3D = source.duplicate()
+			var cloth = node.mesh.surface_get_material(i)
+			if cloth is StandardMaterial3D and ("uniform" in cloth.resource_name.to_lower() or "denim" in cloth.resource_name.to_lower()):
 				cloth.normal_enabled = true
 				cloth.normal_texture = preload("res://assets/urban/materials/sleeve_normal.png")
 				cloth.normal_scale = .45
 				cloth.uv1_triplanar = true
 				cloth.uv1_scale = Vector3.ONE*6
 				cloth.roughness = .92
-				node.set_surface_override_material(i,cloth)
 	for child in node.get_children():
 		_refine_witness(child)
 
