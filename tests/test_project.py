@@ -73,6 +73,13 @@ class ProjectChecks(unittest.TestCase):
         enemy = glb(ROOT / 'godot_project/assets/urban/contractor.glb')
         self.assertIn('FallArmed', {a['name'] for a in enemy['animations']})
         self.assertEqual(len(enemy['skins'][0]['joints']), 22)
+        witness = glb(ROOT / 'godot_project/assets/urban/witness.glb')
+        self.assertEqual({a['name'] for a in witness['animations']}, {'Captive', 'Idle', 'Jog', 'Plead'})
+        self.assertEqual(len(witness['skins']), 1)
+        self.assertEqual(len(witness['skins'][0]['joints']), 17)
+        self.assertLessEqual(sum(len(m['primitives']) for m in witness['meshes']), 13)
+        materials = {m['name'] for m in witness['materials']}
+        self.assertTrue({'Dock uniform', 'Denim', 'Hi-vis vest', 'Skin'} <= materials)
 
     def test_new_animation_audit(self):
         audit = json.loads((ROOT / 'outputs/urban/asset_audit.json').read_text())
@@ -84,6 +91,10 @@ class ProjectChecks(unittest.TestCase):
         self.assertLess(audit['assets']['fps_kit']['triangles'], 6000)
         self.assertLess(audit['assets']['contractor']['triangles'], 32000)
         self.assertLess(audit['assets']['witness']['triangles'], 7000)
+        self.assertEqual(audit['assets']['witness']['bones'], 17)
+        for name, clip in audit['witness_clips'].items():
+            self.assertEqual(clip['non_finite_vertices'], 0, name)
+            self.assertGreater(clip['lowest_vertex_m'], -.035, name)
 
     def test_downloaded_texture_provenance(self):
         manifest = json.loads((ROOT / 'third_party/polyhaven/manifest.json').read_text())

@@ -36,6 +36,15 @@ func gate_blocks(gate: StaticBody3D) -> bool:
 	var ray := PhysicsRayQueryParameters3D.create(gate.global_position+Vector3(0,0,2),gate.global_position+Vector3(0,0,-2),1)
 	var hit := space.intersect_ray(ray)
 	return not hit.is_empty() and hit.collider == gate
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node
+	for child in node.get_children():
+		var found := _find_skeleton(child)
+		if found:
+			return found
+	return null
+
 func key(code: Key) -> void:
 	var event := InputEventKey.new()
 	event.physical_keycode = code
@@ -182,7 +191,13 @@ func _run() -> void:
 	for enemy in mission.enemies:
 		if enemy.encounter == 2:
 			enemy.take_damage(100)
+	var anim: AnimationPlayer = mission.witness_anim
+	var skeleton: Skeleton3D = _find_skeleton(mission.hostage)
+	check("witness.skinned_rig",anim != null and skeleton != null and skeleton.get_bone_count() == 17)
+	check("witness.four_clips",anim != null and ["Captive","Idle","Jog","Plead"].all(func(c): return anim.has_animation(c)))
+	check("witness.captive_before_rescue",anim != null and anim.current_animation == "Captive")
 	check("checkpoint.rescue_progression",mission.try_interact() and mission.stage == 3 and mission.store.checkpoint.stage == 3)
+	check("witness.plead_on_rescue",anim != null and anim.current_animation == "Plead")
 	freeze_enemies()
 	mission.store.checkpoint.health = 1
 	mission.store.checkpoint.ammo = 0
@@ -198,10 +213,12 @@ func _run() -> void:
 	var witness_position: Vector3 = mission.hostage.position
 	await frames(30)
 	check("escort.hold_is_stationary",mission.hostage.position.is_equal_approx(witness_position))
+	check("escort.hold_plays_idle",anim != null and anim.current_animation == "Idle")
 	key(KEY_H)
 	check("escort.h_key_resumes",not mission.escort_hold)
 	await frames(60)
 	check("escort.follow_resumes",mission.hostage.position.distance_to(witness_position) > .5)
+	check("escort.follow_plays_jog",anim != null and anim.current_animation == "Jog")
 	check("escort.outside_nav_rejected",mission.city.escort_path(mission.hostage.position,Vector3(30,0,0)).is_empty())
 	check("escort.corner_goal_recovers",not mission.city.escort_path(Vector3(0,0,-55),Vector3(8.4,0,-54)).is_empty())
 
@@ -220,6 +237,7 @@ func _run() -> void:
 	var worst_stall := 0.0
 	var last_witness: Vector3 = mission.hostage.global_position
 	var max_gap := 0.0
+	var jog_ticks := 0
 	for tick in 5200:
 		if mission.state != "active":
 			break
@@ -239,15 +257,18 @@ func _run() -> void:
 		last_witness = mission.hostage.global_position
 		stall = stall + step if gap > 2.5 and moved < .002 else 0.0
 		worst_stall = maxf(worst_stall,stall)
+		if anim and anim.current_animation == "Jog":
+			jog_ticks += 1
 		await physics_frame
 	Engine.time_scale = 1.0
 	check("escort.route_completed",waypoint >= route.size() - 1)
 	check("escort.never_stuck",worst_stall < 2.0)
 	check("escort.witness_kept_close",max_gap < 8.0)
+	check("escort.jog_clip_used_on_route",jog_ticks > 200)
 	check("evac.mission_won",mission.state == "won")
 	check("evac.witness_at_extraction",mission.hostage.global_position.distance_to(mission.extraction) < 4.5)
 	check("evac.checkpoint_cleared_after_win",mission.store.checkpoint.is_empty())
-	print("escort metrics: waypoint=%d/%d worst_stall=%.2f max_gap=%.2f state=%s" % [waypoint,route.size(),worst_stall,max_gap,mission.state])
+	print("escort metrics: waypoint=%d/%d worst_stall=%.2f max_gap=%.2f jog_ticks=%d state=%s" % [waypoint,route.size(),worst_stall,max_gap,jog_ticks,mission.state])
 
 	# Isolated on-disk fixtures: never overwrite a player's real files.
 	var dir := "user://qa_session/"

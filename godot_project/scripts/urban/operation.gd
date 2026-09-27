@@ -34,6 +34,9 @@ var total_eliminated: int = 0
 var escort_trail: Array[Vector3] = []
 var escort_sample: float = 0.0
 var story_beats: Dictionary = {}
+var witness_anim: AnimationPlayer
+var witness_moving := false
+var witness_still := 0.0
 
 func _ready() -> void:
 	store = preload("res://scripts/urban/session_store.gd").new()
@@ -189,6 +192,7 @@ func try_interact() -> bool:
 	sound.effect("terminal", player.cam.global_position, -15)
 	_activate_stage()
 	if stage == 3:
+		play_witness("Plead",.4)
 		if cinematics_enabled:
 			_begin_cinematic("rescue","rescue")
 		else:
@@ -218,8 +222,7 @@ func _physics_process(delta: float) -> void:
 	if player.position.y < -5:
 		_finish("lost")
 	if rescued:
-		hostage.find_child("LegLeft",true,false).rotation.x = 0
-		hostage.find_child("LegRight",true,false).rotation.x = 0
+		witness_moving = false
 		# A small obstacle-inflated grid avoids cutting through cars, walls or corners.
 		escort_sample -= delta
 		if escort_sample <= 0 and not escort_hold:
@@ -239,10 +242,14 @@ func _physics_process(delta: float) -> void:
 				escort_trail.pop_front()
 			elif hostage.global_position.distance_to(player.global_position) > 1.7:
 				hostage.position += travel.normalized() * minf(delta*3.1,travel.length())
-				hostage.rotation.y = atan2(-travel.x,-travel.z)
-				var swing := sin(elapsed*8)*.22
-				hostage.find_child("LegLeft",true,false).rotation.x = swing
-				hostage.find_child("LegRight",true,false).rotation.x = -swing
+				hostage.rotation.y = lerp_angle(hostage.rotation.y,atan2(-travel.x,-travel.z),1.0-exp(-12.0*delta))
+				witness_moving = true
+		witness_still = 0.0 if witness_moving else witness_still + delta
+		if witness_still > .6 and hostage.global_position.distance_to(player.global_position) < 6:
+			# Standing witness keeps an eye on the officer rather than staring at a wall.
+			var look := player.global_position - hostage.global_position
+			hostage.rotation.y = lerp_angle(hostage.rotation.y,atan2(-look.x,-look.z),1.0-exp(-3.0*delta))
+		play_witness("Jog" if witness_still < .2 else "Idle")
 
 		if evidence_secured and remaining == 0 and player.global_position.distance_to(extraction) < 3 and hostage.global_position.distance_to(extraction) < 4.5:
 			_finish("won")
@@ -258,9 +265,19 @@ func _build_hostage() -> void:
 	hostage = preload("res://assets/urban/witness.glb").instantiate()
 	hostage.name = "Witness"
 	hostage.position = Vector3(0,.02,-58)
+	hostage.rotation.y = PI
 	add_child(hostage)
 	_refine_witness(hostage)
-	_witness_equipment()
+	witness_anim = hostage.find_child("AnimationPlayer",true,false)
+	if witness_anim:
+		for clip in witness_anim.get_animation_list():
+			witness_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+	play_witness("Captive")
+
+func play_witness(clip: String, blend: float = .25) -> void:
+	# Captive (kneeling, tied), Plead (rescue scene), Idle and Jog (escort) from witness.glb.
+	if witness_anim and witness_anim.has_animation(clip) and witness_anim.current_animation != clip:
+		witness_anim.play(clip,blend)
 
 func broadcast(id: String) -> void:
 	var line: Dictionary = sound.lines[id]
@@ -364,56 +381,21 @@ func _on_shot(origin: Vector3, target: Vector3, confirmed: bool) -> void:
 			enemy.hear_noise(origin)
 
 func _refine_witness(node: Node) -> void:
+	# Fabric weave normal on the work shirt and trousers; authored colours are kept.
 	if node is MeshInstance3D:
 		for i in node.mesh.get_surface_count():
 			var source = node.mesh.surface_get_material(i)
 			if source is StandardMaterial3D and ("uniform" in source.resource_name.to_lower() or "denim" in source.resource_name.to_lower()):
 				var cloth: StandardMaterial3D = source.duplicate()
-				cloth.albedo_texture = preload("res://assets/urban/materials/sleeve_albedo.png")
 				cloth.normal_enabled = true
 				cloth.normal_texture = preload("res://assets/urban/materials/sleeve_normal.png")
-				cloth.normal_scale = .4
+				cloth.normal_scale = .45
 				cloth.uv1_triplanar = true
-				cloth.uv1_scale = Vector3.ONE*5
+				cloth.uv1_scale = Vector3.ONE*6
 				cloth.roughness = .92
-				cloth.albedo_color = Color("d0c0a8")
 				node.set_surface_override_material(i,cloth)
 	for child in node.get_children():
 		_refine_witness(child)
-
-func _witness_equipment() -> void:
-	# Dock-worker silhouette: safety cap and reflective strips, separate from hostile gear.
-	var cap_material := StandardMaterial3D.new()
-	cap_material.albedo_color = Color("c5a452")
-	cap_material.roughness = .62
-	var cap := MeshInstance3D.new()
-	var dome := SphereMesh.new()
-	dome.radius = .132
-	dome.height = .17
-	dome.radial_segments = 16
-	dome.rings = 8
-	cap.mesh = dome
-	cap.material_override = cap_material
-	cap.position = Vector3(0,1.723,0)
-	hostage.add_child(cap)
-	var rim := MeshInstance3D.new()
-	var disk := CylinderMesh.new()
-	disk.top_radius = .145
-	disk.bottom_radius = .145
-	disk.height = .014
-	disk.radial_segments = 16
-	rim.mesh = disk
-	rim.material_override = cap_material
-	rim.position = Vector3(0,1.665,0)
-	hostage.add_child(rim)
-	for x in [-.15,.15]:
-		var strip := MeshInstance3D.new()
-		var box := BoxMesh.new()
-		box.size = Vector3(.027,.28,.012)
-		strip.mesh = box
-		strip.material_override = cap_material
-		strip.position = Vector3(x,1.17,-.133)
-		hostage.add_child(strip)
 
 func apply_preferences() -> void:
 	var p: Dictionary = store.preferences
@@ -483,9 +465,10 @@ func restore_checkpoint() -> bool:
 	rescued = stage == 3
 	evidence_secured = rescued
 	hostage.position = Vector3(0,.02,-58)
-	hostage.rotation = Vector3.ZERO
-	hostage.find_child("LegLeft",true,false).rotation = Vector3.ZERO
-	hostage.find_child("LegRight",true,false).rotation = Vector3.ZERO
+	hostage.rotation = Vector3(0,PI,0)
+	witness_moving = false
+	witness_still = 0.0
+	play_witness("Idle" if rescued else "Captive",0.0)
 	city.checkpoint_gate.visible = stage == 0
 	city.checkpoint_gate.collision_layer = 1 if stage == 0 else 0
 	city.checkpoint_gate.collision_mask = city.checkpoint_gate.collision_layer
