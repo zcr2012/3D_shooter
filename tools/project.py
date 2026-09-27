@@ -64,7 +64,7 @@ def main(argv=None):
         godot()
     elif options.command == 'verify':
         godot('--headless', '--editor', '--import')
-        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd']:
+        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd', 'verify_chapter_zh.gd', 'verify_session.gd']:
             godot('--headless', '--script', 'res://tools/' + suite)
         destination = ROOT / 'outputs/v09/motion_verification.json'
         destination.parent.mkdir(parents=True, exist_ok=True)

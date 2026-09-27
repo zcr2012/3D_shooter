@@ -1,9 +1,22 @@
 extends "res://scripts/game/enemy.gd"
-## Authored lane movement, LOS and strafe reactions; deliberately no fake navmesh.
+## Bounded, observable tactics. Only LOS can authorize damage; memory is not sight.
+signal spotted(where: Vector3)
 var encounter: int = 0
-var strafe_clock: float = 0.0
+var role := "anchor"
+var city
+var squad
+var tactical_state := "patrol"
 var last_seen := Vector3.ZERO
-var search_time: float = 0.0
+var search_time := 0.0
+var rounds := 5
+var reload_time := 0.0
+var move_path := PackedVector2Array()
+var cover_slot := Vector3.INF
+var cover_wait := 0.0
+var decision_time := 0.0
+var has_visual := false
+var _clock := 0.0
+var stuck_time := 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -13,85 +26,224 @@ func _ready() -> void:
 	_animation = _find_animation(_model)
 	_play("IdleArmed")
 	_status.visible = false
-	# A distinct, non-emissive rust identification patch; avoid floating enemy labels.
+	rotation.y = 0 if encounter == 3 else PI
 	for child in get_children():
 		if child is MeshInstance3D:
 			child.material_override.emission_enabled = false
 
-func _play(clip: String) -> void:
-	super._play(clip)
-	if _animation and clip == "StrafeArmed":
-		_animation.speed_scale = clampf(absf(velocity.x)/.6,.4,1.3)
-
 func can_see_player() -> bool:
 	if not is_instance_valid(player) or not player.controls_enabled:
 		return false
-	var origin := global_position + Vector3.UP * 1.45
-	var target: Vector3 = player.cam.global_position
-	if origin.distance_to(target) > 30.0:
-		return false
-	var ray := PhysicsRayQueryParameters3D.create(origin, target, 1, [get_rid()])
-	var result := get_world_3d().direct_space_state.intersect_ray(ray)
-	return result.is_empty()
+	return global_position.distance_to(player.global_position) < 30 and _clear_line(global_position,player.cam.global_position)
+
+func _clear_line(from_position: Vector3,target: Vector3) -> bool:
+	var query := PhysicsRayQueryParameters3D.create(from_position+Vector3.UP*1.45,target,1,[get_rid()])
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+
+func in_view_cone() -> bool:
+	var direction: Vector3 = player.global_position-global_position
+	direction.y = 0
+	return direction.length() < 2 or (-global_basis.z).dot(direction.normalized()) > .25
+
+func hear_noise(where: Vector3) -> void:
+	if not active or health <= 0 or global_position.distance_to(where) > 20:
+		return
+	if tactical_state == "patrol" or tactical_state == "search":
+		receive_alert(where)
+
+func receive_alert(where: Vector3) -> void:
+	if not active or health <= 0 or tactical_state in ["engage","relocate","cover","peek"]:
+		return
+	last_seen = where.snapped(Vector3(.5,1,.5))
+	search_time = 5
+	tactical_state = "investigate"
+	_face(last_seen)
+	_plan_to(last_seen)
 
 func _physics_process(delta: float) -> void:
-	if not active or health <= 0 or not is_instance_valid(player):
+	if health <= 0 or not is_instance_valid(player):
 		return
-	_shot_timer = maxf(0, _shot_timer - delta)
-	_react_time = maxf(0, _react_time - delta)
-	strafe_clock += delta
-	if can_see_player():
-		_alert_time += delta
-		last_seen = player.global_position
-		search_time = 4.0
-		var flat := Vector3(last_seen.x, global_position.y, last_seen.z)
-		if global_position.distance_to(flat) > 0.05:
-			look_at(flat)
-		# Keep strafing within a known clear, authored lane; collisions still resolve.
-		var offset := sin(strafe_clock * 0.9) * patrol_width
-		velocity.x = clampf((home.x + offset - global_position.x) * 1.5, -0.8, 0.8)
+	if not active:
+		velocity.x = 0
 		velocity.z = 0
-		if _react_time <= 0:
-			_play("StrafeArmed" if absf(velocity.x) > .15 else "AimArmed")
-			if _alert_time > 1.6 and _shot_timer <= 0:
-				_shot_timer = 2.1
-				_react_time = 0.28
-				_play("FireArmed")
-				fired.emit(global_position + Vector3.UP * 1.4, player.cam.global_position)
-				player.take_damage(10)
+		_settle(delta)
+		return
+	_clock += delta
+	_shot_timer = maxf(0,_shot_timer-delta)
+	_react_time = maxf(0,_react_time-delta)
+	decision_time = maxf(0,decision_time-delta)
+	reload_time = maxf(0,reload_time-delta)
+	search_time = maxf(0,search_time-delta)
+	has_visual = can_see_player() and in_view_cone()
+	if has_visual:
+		if search_time <= 0:
+			spotted.emit(player.global_position)
+		last_seen = player.global_position
+		search_time = 5
+		_alert_time += delta
+		if tactical_state in ["patrol","investigate","search"]:
+			tactical_state = "engage"
+			move_path.clear()
 	else:
 		_alert_time = 0
-		search_time = maxf(0, search_time - delta)
-		_phase += delta * 0.65
-		var target := home + Vector3(sin(_phase) * patrol_width, 0, 0)
-		var travel := target - global_position
-		travel.y = 0
-		velocity.x = clampf(travel.x * 2, -0.7, 0.7)
-		velocity.z = clampf(travel.z * 2, -0.7, 0.7)
-		if _react_time <= 0:
-			if search_time > 0:
-				var flat := Vector3(last_seen.x, global_position.y, last_seen.z)
-				if flat.distance_to(global_position) > 0.1:
-					look_at(flat)
-				_play("AimArmed")
-			elif travel.length() > 0.1:
-				look_at(global_position + travel)
+		if tactical_state == "engage":
+			tactical_state = "search"
+	velocity.x = 0
+	velocity.z = 0
+	if _react_time > 0:
+		_settle(delta)
+		return
+	if rounds == 0:
+		if reload_time <= 0 and tactical_state != "reload":
+			tactical_state = "reload"
+			reload_time = 2.8
+			_play("ReloadArmed")
+		elif reload_time <= 0:
+			rounds = 5
+			tactical_state = "engage" if has_visual else "search"
+		_settle(delta)
+		return
+	match tactical_state:
+		"patrol":
+			_phase += delta*.6
+			velocity.x = clampf((home.x+sin(_phase)*patrol_width-global_position.x)*2,-.55,.55)
+			_play("StrafeArmed" if absf(velocity.x) > .1 else "IdleArmed")
+		"investigate", "relocate", "peek":
+			if _follow_path():
 				_play("WalkArmed")
 			else:
-				_play("IdleArmed")
-	velocity.y -= 9.8 * delta
+				if tactical_state == "relocate":
+					tactical_state = "cover"
+					cover_wait = .85
+				else:
+					tactical_state = "engage" if has_visual else "search"
+		"cover":
+			_face(last_seen)
+			_play("AimArmed")
+			cover_wait -= delta
+			if cover_wait <= 0:
+				_plan_peek()
+		"engage":
+			_face(last_seen)
+			_play("AimArmed")
+			if has_visual and _alert_time >= 1.6 and _shot_timer <= 0 and clear_fire_lane():
+				rounds -= 1
+				_shot_timer = 2.1
+				_react_time = .28
+				_play("FireArmed")
+				fired.emit(global_position+Vector3.UP*1.4,player.cam.global_position)
+				player.take_damage(10)
+			if decision_time <= 0 and (health <= 66 or (role == "flanker" and rounds < 4)):
+				decision_time = 4
+				_choose_cover()
+		"search":
+			_play("AimArmed")
+			_face(last_seen)
+			if search_time <= 0:
+				tactical_state = "patrol"
+				home = global_position
+				release_cover()
+	_settle(delta)
+
+func _settle(delta: float) -> void:
+	var before := global_position
+	var desired := Vector2(velocity.x,velocity.z).length()
+	velocity.y -= 9.8*delta
 	move_and_slide()
+	var travelled := Vector2(global_position.x-before.x,global_position.z-before.z).length()
+	if tactical_state in ["relocate","peek","investigate"] and desired > .1 and travelled < desired*delta*.15:
+		stuck_time += delta
+	else:
+		stuck_time = 0
+	if stuck_time > 1.2:
+		move_path.clear()
+		release_cover()
+		tactical_state = "search"
+		stuck_time = 0
+
+func _face(where: Vector3) -> void:
+	var point := Vector3(where.x,global_position.y,where.z)
+	if point.distance_to(global_position) > .05:
+		look_at(point)
+
+func _plan_to(where: Vector3) -> bool:
+	move_path.clear()
+	if not is_instance_valid(city) or absf(global_position.x) > 10 or global_position.distance_to(where) > 18:
+		return false
+	move_path = city.escort_path(global_position,where)
+	return not move_path.is_empty()
+
+func _follow_path() -> bool:
+	while not move_path.is_empty():
+		var next := Vector3(move_path[0].x,global_position.y,move_path[0].y)
+		if next.distance_to(global_position) < .15:
+			move_path.remove_at(0)
+		else:
+			_face(next)
+			var direction := (next-global_position).normalized()
+			velocity.x = direction.x*1.2
+			velocity.z = direction.z*1.2
+			return true
+	return false
+
+func _choose_cover() -> void:
+	if not is_instance_valid(city) or not is_instance_valid(squad):
+		return
+	var best := Vector3.INF
+	var score := INF
+	for candidate in city.cover_slots:
+		var distance: float = global_position.distance_to(candidate)
+		if distance < .6 or distance > 12 or not squad.cover_available(candidate,self):
+			continue
+		if _clear_line(candidate,last_seen+Vector3.UP*1.4):
+			continue
+		var path: PackedVector2Array = city.escort_path(global_position,candidate)
+		if path.is_empty():
+			continue
+		var cost: float = distance - (minf(absf(candidate.x-global_position.x),4)*.45 if role == "flanker" else 0.0)
+		if cost < score:
+			score = cost
+			best = candidate
+	if best != Vector3.INF and _plan_to(best):
+		release_cover()
+		cover_slot = best
+		squad.cover_claims[best] = get_instance_id()
+		tactical_state = "relocate"
+
+func _plan_peek() -> void:
+	for side in [-1.0,1.0]:
+		var destination := global_position+Vector3(side*1.4,0,0)
+		if _clear_line(destination,last_seen+Vector3.UP*1.4) and _plan_to(destination):
+			tactical_state = "peek"
+			return
+	tactical_state = "search"
+	release_cover()
+
+func release_cover() -> void:
+	if is_instance_valid(squad) and squad.cover_claims.get(cover_slot,0) == get_instance_id():
+		squad.cover_claims.erase(cover_slot)
+	cover_slot = Vector3.INF
 
 func take_damage(amount: int) -> bool:
 	if health <= 0 or not active or amount <= 0:
 		return false
 	health = maxi(0,health-amount)
 	_react_time = .5
+	reload_time = 0
+	tactical_state = "engage"
+	last_seen = player.global_position
+	search_time = 5
 	_play("HitReact")
 	if health == 0:
 		active = false
+		tactical_state = "dead"
+		release_cover()
 		set_deferred("collision_layer",0)
 		set_deferred("collision_mask",0)
 		_play("FallArmed")
 		eliminated.emit(self)
 	return true
+
+func clear_fire_lane() -> bool:
+	var query := PhysicsRayQueryParameters3D.create(global_position+Vector3.UP*1.45,player.cam.global_position,1|4,[get_rid()])
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()

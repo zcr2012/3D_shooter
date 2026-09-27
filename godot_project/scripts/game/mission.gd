@@ -71,7 +71,7 @@ func try_resupply() -> bool:
 	supplies_used = true
 	# Reserve only: never bypass the existing reload completion contract.
 	player._reserve_ammo += 60
-	hud.notice = "SUPPLY COLLECTED  /  +60 RESERVE"
+	hud.notice = "已领取补给　／　备弹增加 60 发"
 	hud.notice_time = 3.0
 	return true
 
@@ -107,7 +107,7 @@ func _on_eliminated(_enemy: Node3D) -> void:
 	remaining = maxi(0, remaining - 1)
 	if remaining == 0:
 		_exit_light.light_color = Color("72ffd7")
-		hud.notice = "SECTOR CLEAR  /  REACH THE EXTRACTION ZONE"
+		hud.notice = "区域已控制　／　前往撤离区"
 		hud.notice_time = 5.0
 
 func _finish(result: String) -> void:
@@ -175,6 +175,7 @@ func _box(label: String, center: Vector3, size: Vector3, color: Color, solid: bo
 func _sign(text: String, position_at: Vector3, size: int = 64) -> void:
 	var label := Label3D.new()
 	label.text = text
+	label.font = preload("res://assets/fonts/NotoSansCJKsc-Regular.otf")
 	label.position = position_at
 	label.font_size = size
 	label.pixel_size = 0.012
@@ -245,9 +246,9 @@ func _build_environment() -> void:
 	_exit_light.light_color = Color("4f929b")
 	_exit_light.omni_range = 4
 	add_child(_exit_light)
-	_sign("SECTOR 09", Vector3(0, 3, -13.8), 110)
-	_sign("EXTRACTION  /  CLEAR ALL CONTACTS", Vector3(0, 1.8, -13.8), 28)
+	_sign("第九辖区", Vector3(0, 3, -13.8), 110)
+	_sign("撤离区　／　先解除全部威胁", Vector3(0, 1.8, -13.8), 28)
 	_cover(supply_position + Vector3.UP * 0.35, Vector3(1, 0.7, 0.7))
-	_sign("SUPPLY\n[E]  +60", supply_position + Vector3(0, 1.3, 0), 32)
+	_sign("补给\n[E] 备弹 60 发", supply_position + Vector3(0, 1.3, 0), 32)
 	for z in [8, 4, 0, -4, -8]:
 		_box("LaneMark", Vector3(-8, 0.012, z), Vector3(0.08, 0.015, 1.2), Color("b9a16e"), false)

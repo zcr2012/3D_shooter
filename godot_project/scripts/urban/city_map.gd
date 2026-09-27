@@ -1,6 +1,8 @@
 extends Node3D
 ## Static architecture is batched by material; collisions remain simple boxes.
 var batches: Dictionary = {}
+var cover_slots: Array[Vector3] = []
+var wheel_positions: Array[Vector3] = []
 var materials: Dictionary = {}
 var checkpoint_gate: StaticBody3D
 var warehouse_gate: StaticBody3D
@@ -41,7 +43,7 @@ func _ready() -> void:
 	checkpoint_gate = gate(Vector3(0,1.5,11),Vector3(24,3,.3))
 	block(Vector3(-2,1.1,13),Vector3(.55,.7,.25),"hazard",true)
 	block(Vector3(-2,1.2,13.15),Vector3(.3,.22,.03),"screen",false)
-	sign_at("ACCESS  /  E",Vector3(-2,1.85,13.2),24)
+	sign_at("门禁终端　／　E",Vector3(-2,1.85,13.2),24)
 	# Warehouse interior, walkable room, real roof and doorway.
 	for x in [-9,9]:
 		block(Vector3(x,2.4,-49),Vector3(.4,4.8,26),"plaster",true)
@@ -72,12 +74,14 @@ func _ready() -> void:
 		block(p+Vector3(0,.3,0),Vector3(.9,.6,.7),"crate",true)
 		block(p+Vector3(0,.62,0),Vector3(.5,.03,.15),"screen",false)
 	block(Vector3(0,.02,52),Vector3(5,.025,5),"extraction",false)
-	sign_at("SECTOR NINE  /  QUARANTINE",Vector3(0,4,10.7),44)
-	sign_at("NORTH DOCK   09",Vector3(0,4.3,-35.7),55)
-	sign_at("RELAY  /  E",Vector3(6,2,-29.7),24)
-	sign_at("EVAC",Vector3(-2,1.2,54),42)
-	sign_at("MERCER STREET",Vector3(-8,3.2,36),30)
+	sign_at("第九辖区　／　临时封锁",Vector3(0,4,10.7),44)
+	sign_at("北码头　九号仓库",Vector3(0,4.3,-35.7),55)
+	sign_at("报警中继　／　E",Vector3(6,2,-29.7),24)
+	sign_at("接应区",Vector3(-2,1.2,54),42)
+	sign_at("默瑟街",Vector3(-8,3.2,36),30)
+	_art_pass()
 	_flush()
+	_flush_wheels()
 	rebuild_navigation()
 
 func _environment() -> void:
@@ -109,7 +113,7 @@ func material(key: String) -> StandardMaterial3D:
 	if materials.has(key):
 		return materials[key]
 	var m := StandardMaterial3D.new()
-	var palette := {"steel":"3c484b","glass":"344f59","paint":"bcb8a5","lamp":"f5dfb3","hazard":"be803c","crate":"4c625d","screen":"73c9ac","extraction":"3c7971","trim":"777d76"}
+	var palette := {"steel":"3c484b","glass":"344f59","paint":"bcb8a5","lamp":"f5dfb3","hazard":"be803c","crate":"4c625d","screen":"73c9ac","extraction":"3c7971","trim":"777d76","rubber":"242a2d"}
 	m.albedo_color = Color(palette.get(key,"ffffff"))
 	m.roughness = .83
 	if key in ["concrete","asphalt","plaster"]:
@@ -176,7 +180,7 @@ func vehicle(pos: Vector3) -> void:
 	block(pos+Vector3(0,1.5,-.3),Vector3(1.72,.1,2.15),"steel",false)
 	for x in [-.91,.91]:
 		for z in [-1.35,1.35]:
-			block(pos+Vector3(x,.32,z),Vector3(.22,.57,.67),"steel",false)
+			wheel_positions.append(pos+Vector3(x,.33,z))
 	for x in [-.65,.65]:
 		block(pos+Vector3(x,.75,2.22),Vector3(.4,.18,.03),"lamp",false)
 
@@ -203,14 +207,16 @@ func open_gate(body: StaticBody3D) -> void:
 	body.visible = false
 	rebuild_navigation()
 
-func sign_at(text: String, pos: Vector3, size: int) -> void:
+func sign_at(text: String, pos: Vector3, size: int) -> Label3D:
 	var label := Label3D.new()
 	label.text = text
+	label.font = preload("res://assets/fonts/NotoSansCJKsc-Regular.otf")
 	label.position = pos
 	label.font_size = size
 	label.pixel_size = .013
 	label.modulate = Color("e8dbb9")
 	add_child(label)
+	return label
 
 func rebuild_navigation() -> void:
 	navigation.clear()
@@ -237,8 +243,89 @@ func grid_cell(pos: Vector3) -> Vector2i:
 	return Vector2i(clampi(roundi((pos.x+10)*2),0,40),clampi(roundi((pos.z+62)*2),0,250))
 
 func escort_path(from_position: Vector3,to_position: Vector3) -> PackedVector2Array:
-	var start := grid_cell(from_position)
-	var end := grid_cell(to_position)
-	if navigation.is_point_solid(start) or navigation.is_point_solid(end):
+	var start := _near_walkable(from_position)
+	var end := _near_walkable(to_position)
+	if start.x < 0 or end.x < 0:
 		return PackedVector2Array()
 	return navigation.get_point_path(start,end)
+
+func _near_walkable(position_at: Vector3) -> Vector2i:
+	if absf(position_at.x) > 10 or position_at.z < -62 or position_at.z > 63:
+		return Vector2i(-1,-1)
+	var original := grid_cell(position_at)
+	var best := Vector2i(-1,-1)
+	var distance := INF
+	for x in range(original.x-2,original.x+3):
+		for z in range(original.y-2,original.y+3):
+			var candidate := Vector2i(x,z)
+			if not navigation.region.has_point(candidate) or navigation.is_point_solid(candidate):
+				continue
+			var world := Vector3(x*.5-10,position_at.y,z*.5-62)
+			var cost := world.distance_squared_to(position_at)
+			if cost >= distance:
+				continue
+			var ray := PhysicsRayQueryParameters3D.create(position_at+Vector3.UP*.8,world+Vector3.UP*.8,1)
+			if get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+				best = candidate
+				distance = cost
+	return best
+
+func _art_pass() -> void:
+	# Deep window frames, shutters, drain pipes and rooftop utility silhouettes.
+	for side in [-1.0,1.0]:
+		for z in [-52.0,-22.0,10.0,42.0]:
+			for floor_y in range(3,int(13+abs(z)*.09),3):
+				for offset in [-10.0,-6.0,-2.0,2.0,6.0,10.0]:
+					block(Vector3(side*11.88,floor_y-1,z+offset),Vector3(.14,1.65,.065),"steel",false)
+					block(Vector3(side*11.88,floor_y-.5,z+offset),Vector3(.14,.06,2.1),"steel",false)
+			block(Vector3(side*11.82,5.5,z+11),Vector3(.13,11,.13),"steel",false)
+			for k in range(8):
+				block(Vector3(side*11.9,.3+k*.25,z),Vector3(.12,.18,2.6),"steel",false)
+			block(Vector3(side*12.5,3,z),Vector3(2,.16,4),"crate",false)
+			block(Vector3(side*19,14+abs(z)*.09,z),Vector3(2.5,1.4,1.8),"steel",false)
+			var sign := sign_at("沿江货运" if z < 0 else "海港五金",Vector3(side*11.7,3.55,z),38)
+			sign.rotation.y = -side*PI/2
+		for z in [-40.0,-49.0,-58.0]:
+			block(Vector3(side*8.4,2.4,z),Vector3(.18,4.8,.18),"steel",true)
+			if side < 0:
+				block(Vector3(0,4.7,z),Vector3(17,.12,.16),"steel",false)
+	# Full-height cover complements cars and low barriers; slots are nav-tested by AI.
+	for point in [Vector3(-6,0,20),Vector3(6,0,2),Vector3(-6,0,-17),Vector3(6,0,-27),Vector3(-6,0,-47),Vector3(6,0,-55)]:
+		block(point+Vector3(0,1.05,0),Vector3(1.1,2.1,.9),"crate",true)
+		block(point+Vector3(0,1.02,.46),Vector3(.015,1.8,.035),"steel",false)
+		block(point+Vector3(.2,1.1,.49),Vector3(.04,.25,.04),"trim",false)
+		for offset in [Vector3(1,0,0),Vector3(-1,0,0),Vector3(0,0,1.2),Vector3(0,0,-1.2)]:
+			cover_slots.append(point+offset)
+	# Roofed pickup van at the existing evacuation point; do not obstruct the pad.
+	var van := Vector3(0,0,59)
+	block(van+Vector3(0,1.15,0),Vector3(2.4,1.9,5.2),"plaster",true)
+	block(van+Vector3(0,1.4,-2.63),Vector3(1.85,.65,.04),"glass",false)
+	block(van+Vector3(0,2.14,-.6),Vector3(1.1,.12,.3),"screen",false)
+	block(van+Vector3(0,.75,-2.65),Vector3(2.2,.12,.1),"steel",false)
+	for x in [-1.18,1.18]:
+		for z in [-1.7,1.7]:
+			wheel_positions.append(van+Vector3(x,.33,z))
+	var van_sign := sign_at("警务接应",van+Vector3(0,1.05,-2.7),30)
+	van_sign.rotation.y = PI
+	var board := sign_at("停电时间：05:12\n封锁指令：05:06",Vector3(-2,2.45,13.25),22)
+	board.modulate = Color("e5c28b")
+
+func _flush_wheels() -> void:
+	for rim in [false,true]:
+		var cylinder := CylinderMesh.new()
+		cylinder.top_radius = .17 if rim else .33
+		cylinder.bottom_radius = cylinder.top_radius
+		cylinder.height = .245 if rim else .22
+		cylinder.radial_segments = 12
+		cylinder.rings = 1
+		cylinder.material = material("trim" if rim else "rubber")
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = cylinder
+		mm.instance_count = wheel_positions.size()
+		for i in wheel_positions.size():
+			mm.set_instance_transform(i,Transform3D(Basis(Vector3.FORWARD,PI/2),wheel_positions[i]))
+		var node := MultiMeshInstance3D.new()
+		node.multimesh = mm
+		node.name = "WheelRims" if rim else "WheelTires"
+		add_child(node)

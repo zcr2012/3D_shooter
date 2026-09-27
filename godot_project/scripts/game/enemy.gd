@@ -46,12 +46,13 @@ func _ready() -> void:
 	band.material_override = mat
 	add_child(band)
 	_status = Label3D.new()
+	_status.font = preload("res://assets/fonts/NotoSansCJKsc-Regular.otf")
 	_status.position.y = 2.0
 	_status.font_size = 28
 	_status.pixel_size = 0.006
 	_status.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_status.modulate = Color("eeb47b")
-	_status.text = "SENTRY"
+	_status.text = "警戒"
 	add_child(_status)
 	_play("IdleArmed")
 
@@ -98,7 +99,7 @@ func _physics_process(delta: float) -> void:
 		target.y = global_position.y
 		if target.distance_squared_to(global_position) > 0.01:
 			look_at(target)
-		_status.text = "!  CONTACT"
+		_status.text = "发现目标"
 		_status.modulate = Color("f87564")
 		if _react_time <= 0.0:
 			_play("AimArmed")
@@ -111,7 +112,7 @@ func _physics_process(delta: float) -> void:
 				player.take_damage(12)
 	else:
 		_alert_time = 0
-		_status.text = "SENTRY"
+		_status.text = "警戒"
 		_status.modulate = Color("eeb47b")
 		_phase += delta * 0.65
 		var target := home + Vector3(sin(_phase) * patrol_width, 0, 0)
@@ -137,7 +138,7 @@ func take_damage(amount: int) -> bool:
 		active = false
 		set_deferred("collision_layer", 0)
 		set_deferred("collision_mask", 0)
-		_status.text = "CLEAR"
+		_status.text = "威胁解除"
 		_status.modulate = Color("79cabc")
 		eliminated.emit(self)
 		var tween := create_tween()

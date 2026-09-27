@@ -1,0 +1,79 @@
+{
+  "language": "zh-CN",
+  "source": "AI-synthesized speech with two voices selected by the user in this session",
+  "notice": "Not recordings of named real actors. Commercial use subject to generation service terms.",
+  "clips": [
+    {
+      "id": "intro",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "这里是指挥中心。林舟，北码头的停电不是事故。证人陈默被困在九号仓库，他手里的运输记录，是我们找到失踪人员的唯一线索。先恢复通道，再带他平安回来。",
+      "file": "godot_project/assets/audio/zh/intro.mp3",
+      "seconds": 14.968,
+      "sha256": "b7e0f3bd40925b290639e38f929f0e075ad31415cbc06ac2f89350ffee4f31bb"
+    },
+    {
+      "id": "checkpoint",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "门禁记录收到了。封锁命令在停电前六分钟就已下达，这不是临时处置。仓库外的中继箱正在向他们发送警报，切断上行，我来释放装卸门。",
+      "file": "godot_project/assets/audio/zh/checkpoint.mp3",
+      "seconds": 16.065,
+      "sha256": "aaae7f43ddb733b531bc7e7c84f7e7dba24c6759c72c887d88e92228cfe8d684"
+    },
+    {
+      "id": "relay",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "报警上行已切断，装卸门解锁。仓库使用独立应急电源，照明不会中断。陈默最后的位置在仓库深处，确认身份后立即带离。",
+      "file": "godot_project/assets/audio/zh/relay.mp3",
+      "seconds": 12.565,
+      "sha256": "0e890db5b77b53862a11558283df54943658a3610e6e704acc9a2158c01f86ff"
+    },
+    {
+      "id": "rescue",
+      "speaker": "陈默",
+      "voice": "voice-01",
+      "text": "我叫陈默，是这里的调度员。清单上写着空箱，可我听见里面有人敲门。我把记录藏了起来，他们才没有立刻把我带走。警官，请相信我，那批货今晚还会转运。",
+      "file": "godot_project/assets/audio/zh/rescue.mp3",
+      "seconds": 16.039,
+      "sha256": "e04ab667dbbd26fded41c5ff764e5243454414e2c91f47ffd1c48fd45b63d825"
+    },
+    {
+      "id": "evidence",
+      "speaker": "陈默",
+      "voice": "voice-01",
+      "text": "记录就在这张存储卡里。名单和货柜编号能一一对应，还有今晚的转运地点。我不认识里面的人，但我不能装作什么都没听见。",
+      "file": "godot_project/assets/audio/zh/evidence.mp3",
+      "seconds": 10.58,
+      "sha256": "1e5ff6f62b396d0a4da0fa5ba78d16af20c54af1b5d61f035b2d4517d97b92fc"
+    },
+    {
+      "id": "evac",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "撤离车辆已就位。林舟，别把陈默留在身后，两个人都进入接应区后再确认撤离。记录的备份正在上传，接应组会保护他的安全。",
+      "file": "godot_project/assets/audio/zh/evac.mp3",
+      "seconds": 11.807,
+      "sha256": "eca966198f0de670117cd1a53edeb3d5068641e4bab27d5ce278b6367740eb84"
+    },
+    {
+      "id": "debrief",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "证人已接应，存储卡校验通过。运输记录指向今晚的一次转运，我们还有机会找到那些人。你带回来的不只是证据，也是一个愿意开口的人。",
+      "file": "godot_project/assets/audio/zh/debrief.mp3",
+      "seconds": 13.976,
+      "sha256": "f3c38c72e3ae2debc17958b3d4a3f76652c8539656c44af6ecf82cadc14733d8"
+    },
+    {
+      "id": "reinforcements",
+      "speaker": "指挥中心",
+      "voice": "voice-00",
+      "text": "注意，街区南侧出现两名增援。借助车辆和路障逐段推进，先确认下一个掩体，再让陈默跟上。不要在开阔地停留。",
+      "file": "godot_project/assets/audio/zh/reinforcements.mp3",
+      "seconds": 11.624,
+      "sha256": "0b01d5b86507cf1295a145e88510da867c9f27e765915c047f8e21b10fee8ab1"
+    }
+  ]
+}

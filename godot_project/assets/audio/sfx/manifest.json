@@ -1,0 +1,13 @@
+{
+  "source": "Original deterministic synthesis; scripts/build_chapter_audio.py",
+  "sample_rate": 22050,
+  "files": {
+    "godot_project/assets/audio/sfx/carbine_dry.wav": "81eaf27625d8e34e37a3919eaa30a20e27509ffe9519a7239586f46239c68859",
+    "godot_project/assets/audio/sfx/carbine_room.wav": "7014b8a3131d56b1344afbc13942a98c103ae2d73e570c732a3651c55e5b56c2",
+    "godot_project/assets/audio/sfx/dock_ambience.wav": "a119c583b6035b80b196dd845fae188f9e019a7ab8a26c10d04f760de4c3ce35",
+    "godot_project/assets/audio/sfx/footstep.wav": "50b4c3891628a4f499b22f5392d4e152b3338aff61ff4c6b04f1d5f17220e56d",
+    "godot_project/assets/audio/sfx/hurt.wav": "94431bccdc3cc800fb456b2d878e5e7a7e6ff0c92cd8b3a17abd8f2767af604a",
+    "godot_project/assets/audio/sfx/magazine.wav": "143cb515936b1c29e8a0d103ccb5ee3d4cb5046d8c34a9d48753bae09f125f2c",
+    "godot_project/assets/audio/sfx/terminal.wav": "9b41e68ed58d076ab78e415f9206edd188060e31800d2441d4a56723563dfbcb"
+  }
+}

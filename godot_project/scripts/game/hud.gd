@@ -1,6 +1,5 @@
 extends Control
-## Resolution-independent, asset-free HUD. English UI avoids system-font
-## differences; Chinese controls and build instructions live in docs/PLAY.md.
+## Resolution-independent Chinese HUD with a bundled OFL CJK font.
 var mission
 var hit_time: float = 0.0
 var hurt_time: float = 0.0
@@ -18,7 +17,7 @@ const BUTTON := Rect2(490, 505, 300, 52)
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_font = ThemeDB.fallback_font
+	_font = preload("res://assets/fonts/NotoSansCJKsc-Regular.otf")
 	_sound = AudioStreamPlayer.new()
 	_sound.volume_db = -15
 	add_child(_sound)
@@ -82,33 +81,33 @@ func _draw() -> void:
 	var player = mission.player
 	draw_rect(Rect2(28, 26, 348, 100), BG)
 	draw_rect(Rect2(28, 26, 3, 100), TEAL)
-	_text("FIELD OPERATIONS   /   09", Vector2(48, 53), 13, TEAL)
-	_text("CLEAR THE WAREHOUSE", Vector2(48, 82), 21)
-	var objective := "%02d CONTACTS REMAIN" % mission.remaining if mission.remaining > 0 else "REACH THE NORTH EXTRACTION ZONE"
+	_text("第九辖区　／　现场行动", Vector2(48, 53), 13, TEAL)
+	_text("控制仓库区域", Vector2(48, 82), 21)
+	var objective := "剩余威胁 %02d" % mission.remaining if mission.remaining > 0 else "前往北侧撤离区"
 	_text(objective, Vector2(48, 108), 12, MUTED)
-	_text("LIVE  /  %02d:%02d" % [int(mission.elapsed) / 60, int(mission.elapsed) % 60], Vector2(1090, 46), 16, TEAL)
+	_text("行动　%02d:%02d" % [int(mission.elapsed) / 60, int(mission.elapsed) % 60], Vector2(1090, 46), 16, TEAL)
 	_draw_radar()
 	draw_rect(Rect2(28, 616, 262, 76), BG)
-	_text("OPERATOR", Vector2(48, 641), 12, MUTED)
+	_text("行动员", Vector2(48, 641), 12, MUTED)
 	_text("%03d" % player.health, Vector2(48, 676), 30)
 	draw_rect(Rect2(124, 655, 142, 5), Color("293d44"))
 	draw_rect(Rect2(124, 655, 142 * float(player.health) / player.max_health, 5), TEAL if player.health > 30 else Color("f47a69"))
 	draw_rect(Rect2(1000, 602, 252, 90), BG)
-	_text("CARBINE  /  SEMI", Vector2(1020, 629), 12, MUTED)
+	_text("卡宾枪　／　单发", Vector2(1020, 629), 12, MUTED)
 	_text("%02d" % player.ammo, Vector2(1020, 674), 38, INK if player.ammo > 0 else Color("f47a69"))
 	_text("/  %03d" % player.reserve_ammo, Vector2(1090, 673), 20, MUTED)
-	_text("R  RELOAD", Vector2(1160, 627), 11, TEAL)
+	_text("R 换弹", Vector2(1160, 627), 11, TEAL)
 	if player.is_reloading:
 		var progress: float = clampf(player._action_elapsed / maxf(player._action_duration, 0.01), 0, 1)
 		draw_rect(Rect2(1020, 684, 210 * progress, 2), TEAL)
-		_center("RELOADING", 409, 13, TEAL)
+		_center("正在换弹", 409, 13, TEAL)
 	elif player.ammo == 0:
-		_center("MAGAZINE EMPTY  /  PRESS R", 409, 13, Color("f47a69"))
-	_text("WASD  MOVE    SHIFT  RUN    RMB  AIM    LMB  FIRE    ESC  CURSOR", Vector2(344, 688), 12, MUTED)
+		_center("弹匣已空　／　按 R 换弹", 409, 13, Color("f47a69"))
+	_text("WASD 移动　Shift 冲刺　右键瞄准　左键开火　Esc 释放鼠标", Vector2(344, 688), 12, MUTED)
 	if not player._look_enabled:
-		_center("CLICK TO RECAPTURE THE POINTER", 580, 14, TEAL)
+		_center("点击鼠标恢复视角控制", 580, 14, TEAL)
 	if not mission.supplies_used and player.global_position.distance_to(mission.supply_position) < 2.2:
-		_center("[ E ]  COLLECT 60 RESERVE ROUNDS", 548, 16, TEAL)
+		_center("[ E ] 领取 60 发备弹", 548, 16, TEAL)
 	if notice_time > 0:
 		_center(notice, 161, 16, TEAL)
 	# Actual raycast reticle is the viewport center at every aspect ratio.
@@ -126,7 +125,7 @@ func _draw_radar() -> void:
 	var rect := Rect2(1120, 68, 132, 176)
 	draw_rect(rect, BG)
 	draw_rect(rect.grow(-8), Color("365059"), false, 1)
-	_text("N", Vector2(1182, 87), 11, TEAL)
+	_text("北", Vector2(1182, 87), 11, TEAL)
 	var p: Vector3 = mission.player.global_position
 	var dot_at := Vector2(1186 + p.x * 5.0, 156 + p.z * 5.0)
 	draw_circle(dot_at, 3.0, TEAL)
@@ -143,28 +142,28 @@ func _draw_overlay() -> void:
 	draw_rect(Rect2(0, 0, 1280, 720), Color(0.025, 0.052, 0.068, 0.91))
 	for x in range(0, 1280, 40):
 		draw_line(Vector2(x, 0), Vector2(x, 720), Color(0.3, 0.6, 0.65, 0.035))
-	_text("SWAT   /   TACTICAL LAB", Vector2(48, 53), 15, TEAL)
-	_text("V09   ·   PLAYABLE PROTOTYPE", Vector2(964, 53), 12, MUTED)
-	_center("OPERATION", 198, 15, TEAL)
-	var title := "SECTOR NINE"
-	var subtitle := "Clear four hostile contacts. Reach the north extraction zone."
+	_text("特警　／　训练场", Vector2(48, 53), 15, TEAL)
+	_text("第九版　·　训练关", Vector2(964, 53), 12, MUTED)
+	_center("行动简报", 198, 15, TEAL)
+	var title := "第九辖区"
+	var subtitle := "控制四名武装人员占据的区域，前往北侧撤离点。"
 	if mission.state == "won":
-		title = "SECTOR SECURED"
-		subtitle = "All contacts neutralized. Extraction confirmed."
+		title = "区域已控制"
+		subtitle = "全部威胁已解除，撤离确认。"
 	elif mission.state == "lost":
-		title = "OPERATOR DOWN"
-		subtitle = "Break line of sight. Use cover before reloading."
+		title = "行动失败"
+		subtitle = "先脱离敌人视线，利用掩体安全换弹。"
 	_center(title, 263, 52)
 	_center(subtitle, 308, 17, MUTED)
 	draw_line(Vector2(420, 345), Vector2(860, 345), Color("38545c"))
 	if mission.state == "briefing":
-		_center("01  MOVE WITH WASD     02  AIM WITH RMB     03  FIRE WITH LMB", 390, 14)
-		_center("R  reload    /    SHIFT  sprint    /    E  collect supply    /    ESC  release cursor", 425, 14, MUTED)
-		_center("Ammunition is limited. Watch the radar and the contact warning.", 460, 14, MUTED)
+		_center("第一步：WASD 移动　第二步：右键瞄准　第三步：左键开火", 390, 14)
+		_center("R 换弹　／　Shift 冲刺　／　E 补给　／　Esc 释放鼠标", 425, 14, MUTED)
+		_center("弹药有限，请留意雷达与警戒提示。", 460, 14, MUTED)
 	else:
-		_center("TIME  %02d:%02d     /     CONTACTS  %d / 4" % [int(mission.elapsed) / 60, int(mission.elapsed) % 60, 4 - mission.remaining], 395, 20)
+		_center("用时 %02d:%02d　／　已解除威胁 %d / 4" % [int(mission.elapsed) / 60, int(mission.elapsed) % 60, 4 - mission.remaining], 395, 20)
 		var accuracy := int(float(mission.hits) / maxi(mission.shots, 1) * 100)
-		_center("SHOTS  %d     /     HIT RATE  %d%%" % [mission.shots, accuracy], 435, 16, MUTED)
+		_center("射击 %d 次　／　命中率 %d%%" % [mission.shots, accuracy], 435, 16, MUTED)
 	draw_rect(BUTTON, TEAL)
-	_center("DEPLOY  /  ENTER" if mission.state == "briefing" else "RETRY  /  ENTER", 538, 17, Color("102c30"))
-	_center("PROCEDURAL ASSETS  /  LOCAL SINGLE-PLAYER  /  NO NETWORK REQUIRED", 662, 11, MUTED)
+	_center("开始行动　／　回车" if mission.state == "briefing" else "重新行动　／　回车", 538, 17, Color("102c30"))
+	_center("原创资产　／　本地单人　／　游戏无需联网", 662, 11, MUTED)
