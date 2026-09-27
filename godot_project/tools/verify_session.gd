@@ -132,6 +132,17 @@ func _run() -> void:
 	bad = sample.duplicate(true)
 	bad.stage = 1.5
 	check("checkpoint.rejects_fractional_stage",not mission.store.valid_checkpoint(bad))
+	# Headshot counter is optional (older saves) but bounded by hits when present.
+	var with_headshots := sample.duplicate(true)
+	with_headshots.headshots = 2
+	check("checkpoint.legacy_without_headshots_valid",mission.store.valid_checkpoint(sample) and not sample.has("headshots"))
+	check("checkpoint.headshots_accepted",mission.store.valid_checkpoint(with_headshots))
+	bad = sample.duplicate(true)
+	bad.headshots = 5
+	check("checkpoint.rejects_headshots_over_hits",not mission.store.valid_checkpoint(bad))
+	bad = sample.duplicate(true)
+	bad.headshots = "two"
+	check("checkpoint.rejects_non_numeric_headshots",not mission.store.valid_checkpoint(bad))
 
 	# Every stage: gates (visual, collision, physics ray, navigation) and only the current enemy group.
 	for stage in 4:
@@ -165,6 +176,13 @@ func _run() -> void:
 	p = mission.player
 	check("checkpoint.stage_and_gate",mission.stage == 2 and mission.remaining == 2 and not mission.city.warehouse_gate.visible)
 	check("checkpoint.inventory_exact",p.health == 77 and p.ammo == 7 and p.reserve_ammo == 43 and not p.is_reloading)
+	check("checkpoint.legacy_headshots_default_zero",mission.headshots == 0)
+	check("checkpoint.feedback_cleared",mission.hud.damage_marks.is_empty() and mission.hud.hurt_time == 0 and mission.hud.hit_time == 0)
+	mission.headshots = 3
+	mission.hits = 4
+	mission.shots = 9
+	check("checkpoint.saves_headshots",mission.save_checkpoint() and int(mission.store.checkpoint.get("headshots",-1)) == 3)
+	mission.headshots = 0
 	check("checkpoint.supplies_not_duplicated",mission.supply_uses == [true,false])
 	check("checkpoint.cleared_groups_disabled",mission.enemies[0].health == 0 and mission.enemies[0].collision_layer == 0 and not mission.enemies[0].active)
 	check("checkpoint.input_and_camera",mission.state == "active" and p.controls_enabled and p.cam.current)

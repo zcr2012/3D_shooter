@@ -1,3 +1,4 @@
+> 三章战役（默瑟街 → 堆场 → 潮汐）的结构、章节切换与存档规则：见 [CAMPAIGN.md](CAMPAIGN.md)；剧本见 [STORY_SCRIPT_ZH.md](STORY_SCRIPT_ZH.md)。
 > 最新中文/配音/过场操作：见 [CHAPTER_ZH.md](CHAPTER_ZH.md)。
 
 > 新默认入口为第一人称城市首关；完整操作与流程见 [URBAN_CHAPTER.md](URBAN_CHAPTER.md)。下文 v09 仓库说明保留作旧关参考。

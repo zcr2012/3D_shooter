@@ -99,12 +99,30 @@ func _run() -> void:
 	p.global_position = Vector3(1000,0,1000)
 	p._yaw = 0
 	p.rotation = Vector3.ZERO
-	p.arm.rotation = Vector3.ZERO
+	# 0.14 rad of downward pitch lands the 3.7 m ray on the torso (~1.06 m). A level
+	# eye ray at 1.58 m against a 1.69 m operator is a headshot by construction and is
+	# exercised separately below. Camera punch is zeroed so the ray is deterministic.
+	p.arm.rotation = Vector3(-0.14,0,0)
 	p.cam.position = Vector3.ZERO
+	p.cam.rotation = Vector3.ZERO
+	p.punch = Vector3.ZERO
+	p.punch_velocity = Vector3.ZERO
 	target.global_position = Vector3(1000,0,996)
 	await frames()
+	var impacts: Array[Dictionary] = []
+	p.bullet_impact.connect(func(where: Vector3, _normal: Vector3, _direction: Vector3, kind: String, headshot: bool): impacts.append({"where":where,"kind":kind,"headshot":headshot}))
+	var casings_before := 0
+	for casing in p.casings:
+		casings_before += 1 if casing.visible else 0
 	p._fire_hitscan()
 	check("fps.eye_ray_damage",target.health == 66)
+	check("feedback.body_hit_reported",impacts.size() == 1 and impacts[0].kind == "hit" and not impacts[0].headshot and impacts[0].where.y < 1.2 and impacts[0].where.y > 0.9)
+	check("feedback.blood_burst_pooled",mission.effects.blood_bursts == 1 and mission.effects.blood.size() == mission.effects.BLOOD_POOL and mission.effects.blood[0].emitting)
+	check("feedback.enemy_flash_overlay",target._flash_time > 0 and target._flash_meshes.size() > 0 and target._flash_meshes[0].material_overlay != null)
+	check("feedback.hit_marker_kind",mission.hud.hit_kind == "hit" and mission.hud.hit_time > 0.16)
+	check("feedback.shot_adds_camera_punch",p.punch_velocity.x > 0.5)
+	check("feedback.casing_ejected",p.casings.filter(func(casing: Node3D) -> bool: return casing.visible).size() == casings_before + 1)
+	check("feedback.flash_material_shared_not_duplicated",target._flash_meshes[0].material_overlay == target.flash_overlay() and target._flash_meshes.back().material_overlay == target.flash_overlay())
 	var wall := StaticBody3D.new()
 	wall.position = Vector3(1000,1,999.8)
 	var shape := CollisionShape3D.new()
@@ -116,12 +134,53 @@ func _run() -> void:
 	await frames()
 	p._fire_hitscan()
 	check("fps.near_wall_blocks_bullet",target.health == 66)
+	check("feedback.wall_impact_effect",impacts.size() == 2 and impacts[1].kind == "world" and mission.effects.impact_bursts == 1 and mission.effects.holes[0].visible and mission.effects.holes[0].global_position.distance_to(impacts[1].where) < 0.03)
 	check("enemy.wall_blocks_vision",not target.can_see_player())
 	check("crouch.stand_checks_obstruction",not p._can_stand())
 	wall.queue_free()
-	await frames()
+	await frames(14)
 	check("enemy.clear_los",target.can_see_player())
 	check("crouch.clear_space_can_stand",p._can_stand())
+	check("feedback.enemy_flash_clears",target._flash_time <= 0 and target._flash_meshes[0].material_overlay == null)
+	# Headshot: level eye ray at 1.58 m passes within 0.17 m of the axis above 1.42 m.
+	target.health = 100
+	p.arm.rotation = Vector3.ZERO
+	impacts.clear()
+	p._fire_hitscan()
+	check("headshot.double_damage",target.health == 32 and impacts.size() == 1 and impacts[0].headshot and impacts[0].kind == "hit")
+	check("headshot.marker_and_counter",mission.hud.hit_kind == "headshot" and mission.headshots == 1)
+	# Shoulder graze at the same height is a body hit: offset the ray 0.2 m from the axis.
+	target.health = 100
+	p.global_position = Vector3(1000.2,0,1000)
+	impacts.clear()
+	p._fire_hitscan()
+	check("headshot.shoulder_is_body_hit",target.health == 66 and impacts.size() == 1 and not impacts[0].headshot)
+	p.global_position = Vector3(1000,0,1000)
+	target.health = 32
+	impacts.clear()
+	var bursts_before: int = mission.effects.blood_bursts
+	p._fire_hitscan()
+	check("kill.confirmed_kind",target.health == 0 and impacts.size() == 1 and impacts[0].kind == "kill" and impacts[0].headshot)
+	check("kill.marker_and_counter",mission.hud.hit_kind == "kill" and mission.hud.hit_time > 0.4 and mission.headshots == 2)
+	check("kill.blood_reuses_pool",mission.effects.blood_bursts == bursts_before + 1 and mission.effects.get_child_count() == mission.effects.BLOOD_POOL + 2 * mission.effects.IMPACT_POOL + mission.effects.HOLE_POOL + mission.effects.SPLAT_POOL)
+	check("kill.dead_target_ignored",not target.take_damage(34))
+	# Player damage: attacker on the right produces a right-side arc and a camera dip.
+	p.arm.rotation = Vector3(-0.14,0,0)
+	p.punch_velocity = Vector3.ZERO
+	var marks_before: int = mission.hud.damage_marks.size()
+	p.take_damage(10,Vector3(1004,1.4,1000))
+	check("hurt.directional_mark",p.health == 90 and mission.hud.damage_marks.size() == marks_before + 1 and is_equal_approx(float(mission.hud.damage_marks.back().yaw),-PI/2))
+	check("hurt.vignette_scaled",mission.hud.hurt_peak > 0.3 and mission.hud.hurt_time > 0.35 and not mission.hud.splats.is_empty())
+	check("hurt.camera_dip",p.punch_velocity.x < -1.0 and p.punch_velocity.z > 0.5)
+	p.take_damage(10,Vector3(996,1.4,1000))
+	check("hurt.cooldown_keeps_single_mark",p.health == 90 and mission.hud.damage_marks.size() == marks_before + 1)
+	# Low health: the HUD pulse/desaturation state follows the current health every frame.
+	p.health = 22
+	await frames()
+	check("hurt.low_health_state",mission.hud.low_health > 0.2 and is_instance_valid(mission.hud._desaturate) and mission.hud._desaturate.visible)
+	p.health = 100
+	await frames()
+	check("hurt.low_health_recovers",is_zero_approx(mission.hud.low_health) and not mission.hud._desaturate.visible)
 	# Supplies heal but never fill a magazine or bypass reload.
 	p.global_position = mission.supply_points[0]
 	p.health = 40
@@ -192,6 +251,12 @@ func _run() -> void:
 	await frames(20)
 	mission.player.take_damage(100)
 	check("death.fails_and_stops_ai",mission.state == "lost" and not mission.enemies[0].active)
+	var ground: Dictionary = mission.effects.floor_under(Vector3(1000,1,998),mission.get_world_3d().direct_space_state)
+	if not ground.is_empty():
+		mission.effects.spawn_splat(ground.position,ground.normal)
+	check("feedback.floor_splat_placed",not ground.is_empty() and mission.effects.splats[0].visible and absf(mission.effects.splats[0].global_position.y - 0.02) < 0.01)
+	mission.effects.clear()
+	check("feedback.clear_hides_decals",not mission.effects.splats[0].visible and not mission.effects.holes[0].visible)
 	var path := ProjectSettings.globalize_path("res://../outputs/urban/engine_verification.json")
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
 	var file := FileAccess.open(path,FileAccess.WRITE)

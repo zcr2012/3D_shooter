@@ -43,7 +43,7 @@ def executable(name):
 
 
 SUITES = ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd',
-          'verify_chapter_zh.gd', 'verify_session.gd']
+          'verify_chapter_zh.gd', 'verify_session.gd', 'verify_campaign.gd']
 
 
 def annotate(level, title, text):

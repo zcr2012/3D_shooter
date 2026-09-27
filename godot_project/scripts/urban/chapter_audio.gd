@@ -5,6 +5,7 @@ var voice: AudioStreamPlayer
 var ambience: AudioStreamPlayer
 var effects: Array[AudioStreamPlayer3D] = []
 var effect_cursor := 0
+var heartbeat: AudioStreamPlayer
 var voice_enabled := true
 var step_clock := 0.0
 var was_reloading := false
@@ -37,7 +38,17 @@ func _ready() -> void:
 	bed.loop_end = 12 * bed.mix_rate
 	ambience.stream = bed
 	add_child(ambience)
-	for i in 8:
+	# Low-health heartbeat: a dedicated looping player so it never steals an effect slot.
+	heartbeat = AudioStreamPlayer.new()
+	heartbeat.bus = "Effects"
+	heartbeat.volume_db = -60
+	var pulse: AudioStreamWAV = load("res://assets/audio/sfx/heartbeat.wav")
+	pulse.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	pulse.loop_end = int(1.15 * pulse.mix_rate)
+	heartbeat.stream = pulse
+	add_child(heartbeat)
+	# Twelve pooled emitters: gunfire, footsteps and now impact/confirm cues share them.
+	for i in 12:
 		var sound := AudioStreamPlayer3D.new()
 		sound.bus = "Effects"
 		sound.max_distance = 45
@@ -48,7 +59,8 @@ func _ready() -> void:
 
 func speak(id: String) -> float:
 	voice.stop()
-	voice.stream = load("res://assets/audio/zh/"+id+".mp3")
+	var path := "res://assets/audio/zh/"+id+".mp3"
+	voice.stream = load(path) if ResourceLoader.exists(path) else null
 	if voice.stream:
 		voice.play()
 		return voice.stream.get_length() + .7
@@ -85,8 +97,11 @@ func _process(delta: float) -> void:
 	var target := -7.0 if voice.playing and voice_enabled else 0.0
 	AudioServer.set_bus_volume_db(bus,lerpf(AudioServer.get_bus_volume_db(bus),target,1-exp(-6*delta)))
 	if not is_instance_valid(mission.player) or mission.state != "active":
+		if heartbeat.playing:
+			heartbeat.stop()
 		return
 	var p = mission.player
+	_update_heartbeat(int(p.health),delta)
 	step_clock -= delta
 	if p.is_on_floor() and p.horizontal_speed > .4 and step_clock <= 0:
 		step_clock = .34 if p.horizontal_speed > 3 else .52
@@ -95,11 +110,25 @@ func _process(delta: float) -> void:
 		effect("magazine",p.cam.global_position,-13)
 	was_reloading = p.is_reloading
 
+func _update_heartbeat(health: int, delta: float) -> void:
+	# Below 30 health the pulse fades in and gets louder as health drops; silent otherwise.
+	var low := clampf((30.0-health)/30.0,0.0,1.0) if health > 0 else 0.0
+	if low <= 0.0:
+		if heartbeat.playing:
+			heartbeat.stop()
+		return
+	if not heartbeat.playing:
+		heartbeat.volume_db = -40
+		heartbeat.play()
+	heartbeat.volume_db = lerpf(heartbeat.volume_db,lerpf(-24.0,-10.0,low),1-exp(-4*delta))
+
 func _exit_tree() -> void:
 	if is_instance_valid(voice):
 		voice.stop()
 	if is_instance_valid(ambience):
 		ambience.stop()
+	if is_instance_valid(heartbeat):
+		heartbeat.stop()
 	for sound in effects:
 		sound.stop()
 	var bus := AudioServer.get_bus_index("Effects")
@@ -109,12 +138,14 @@ func _exit_tree() -> void:
 func pause_audio(paused: bool) -> void:
 	voice.stream_paused = paused
 	ambience.stream_paused = paused
+	heartbeat.stream_paused = paused
 	for effect_player in effects:
 		effect_player.stream_paused = paused
 
 func stop_all() -> void:
 	voice.stop()
 	ambience.stop()
+	heartbeat.stop()
 	for effect_player in effects:
 		effect_player.stop()
 	was_reloading = false

@@ -101,7 +101,39 @@
 			"passed": true
 		},
 		{
+			"id": "feedback.body_hit_reported",
+			"passed": true
+		},
+		{
+			"id": "feedback.blood_burst_pooled",
+			"passed": true
+		},
+		{
+			"id": "feedback.enemy_flash_overlay",
+			"passed": true
+		},
+		{
+			"id": "feedback.hit_marker_kind",
+			"passed": true
+		},
+		{
+			"id": "feedback.shot_adds_camera_punch",
+			"passed": true
+		},
+		{
+			"id": "feedback.casing_ejected",
+			"passed": true
+		},
+		{
+			"id": "feedback.flash_material_shared_not_duplicated",
+			"passed": true
+		},
+		{
 			"id": "fps.near_wall_blocks_bullet",
+			"passed": true
+		},
+		{
+			"id": "feedback.wall_impact_effect",
 			"passed": true
 		},
 		{
@@ -118,6 +150,62 @@
 		},
 		{
 			"id": "crouch.clear_space_can_stand",
+			"passed": true
+		},
+		{
+			"id": "feedback.enemy_flash_clears",
+			"passed": true
+		},
+		{
+			"id": "headshot.double_damage",
+			"passed": true
+		},
+		{
+			"id": "headshot.marker_and_counter",
+			"passed": true
+		},
+		{
+			"id": "headshot.shoulder_is_body_hit",
+			"passed": true
+		},
+		{
+			"id": "kill.confirmed_kind",
+			"passed": true
+		},
+		{
+			"id": "kill.marker_and_counter",
+			"passed": true
+		},
+		{
+			"id": "kill.blood_reuses_pool",
+			"passed": true
+		},
+		{
+			"id": "kill.dead_target_ignored",
+			"passed": true
+		},
+		{
+			"id": "hurt.directional_mark",
+			"passed": true
+		},
+		{
+			"id": "hurt.vignette_scaled",
+			"passed": true
+		},
+		{
+			"id": "hurt.camera_dip",
+			"passed": true
+		},
+		{
+			"id": "hurt.cooldown_keeps_single_mark",
+			"passed": true
+		},
+		{
+			"id": "hurt.low_health_state",
+			"passed": true
+		},
+		{
+			"id": "hurt.low_health_recovers",
 			"passed": true
 		},
 		{
@@ -187,6 +275,14 @@
 		{
 			"id": "death.fails_and_stops_ai",
 			"passed": true
+		},
+		{
+			"id": "feedback.floor_splat_placed",
+			"passed": true
+		},
+		{
+			"id": "feedback.clear_hides_decals",
+			"passed": true
 		}
 	],
 	"engine": {
@@ -201,7 +297,7 @@
 		"timestamp": 0
 	},
 	"failure_count": 0,
-	"static_batches": 14,
-	"static_instances": 1178,
+	"static_batches": 15,
+	"static_instances": 1360,
 	"status": "PASS"
 }

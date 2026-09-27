@@ -25,6 +25,8 @@ func _ready() -> void:
 	_model = preload("res://assets/urban/contractor.glb").instantiate()
 	add_child(_model)
 	_animation = _find_animation(_model)
+	_flash_meshes.clear()
+	_collect_flash_meshes(_model)
 	_play("IdleArmed")
 	_status.visible = false
 	rotation.y = 0 if encounter == 3 else PI
@@ -138,7 +140,7 @@ func _physics_process(delta: float) -> void:
 				_react_time = .28
 				_play("FireArmed")
 				fired.emit(global_position+Vector3.UP*1.4,player.cam.global_position)
-				player.take_damage(10)
+				player.take_damage(10,global_position+Vector3.UP*1.4)
 			if decision_time <= 0 and (health <= 66 or (role == "flanker" and rounds < 4)):
 				decision_time = 4
 				_choose_cover()
@@ -189,7 +191,7 @@ func _face(where: Vector3) -> void:
 
 func _plan_to(where: Vector3) -> bool:
 	move_path.clear()
-	if not is_instance_valid(city) or absf(global_position.x) > 10 or global_position.distance_to(where) > 18:
+	if not is_instance_valid(city) or not city.inside_corridor(global_position) or global_position.distance_to(where) > 18:
 		return false
 	move_path = city.escort_path(global_position,where)
 	return not move_path.is_empty()
@@ -250,6 +252,7 @@ func take_damage(amount: int) -> bool:
 		return false
 	health = maxi(0,health-amount)
 	_react_time = .5
+	flash_hit()
 	reload_time = 0
 	tactical_state = "engage"
 	last_seen = player.global_position
