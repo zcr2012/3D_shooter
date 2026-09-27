@@ -3247,7 +3247,7 @@
 			"passed": true
 		}
 	],
-	"duration_seconds": 38.889,
+	"duration_seconds": 38.808,
 	"engine": {
 		"build": "custom_build",
 		"hash": "unknown",
@@ -3264,5 +3264,5 @@
 	"scope": "Functional regression only. Headless timing is not graphical performance evidence.",
 	"status": "PASS",
 	"suite": "production_motion",
-	"timestamp_utc": "2026-09-27T02:10:17"
+	"timestamp_utc": "2026-09-27T03:03:24"
 }

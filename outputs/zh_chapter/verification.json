@@ -1,0 +1,149 @@
+{
+	"checks": [
+		{
+			"id": "zh.bundled_font",
+			"passed": true
+		},
+		{
+			"id": "zh.cjk_glyphs",
+			"passed": true
+		},
+		{
+			"id": "zh.wrap_preserves_text",
+			"passed": true
+		},
+		{
+			"id": "zh.wrap_fits_box",
+			"passed": true
+		},
+		{
+			"id": "voice.eight_dialogues",
+			"passed": true
+		},
+		{
+			"id": "voice.clips_decode",
+			"passed": true
+		},
+		{
+			"id": "cinematic.intro_started",
+			"passed": true
+		},
+		{
+			"id": "cinematic.controls_blocked",
+			"passed": true
+		},
+		{
+			"id": "cinematic.interaction_blocked",
+			"passed": true
+		},
+		{
+			"id": "voice.duration_drives_subtitles",
+			"passed": true
+		},
+		{
+			"id": "cinematic.camera_moves",
+			"passed": true
+		},
+		{
+			"id": "voice.mute_retains_subtitles",
+			"passed": true
+		},
+		{
+			"id": "voice.effects_do_not_replace_speech",
+			"passed": true
+		},
+		{
+			"id": "cinematic.skip_restores_camera",
+			"passed": true
+		},
+		{
+			"id": "story.transcript_retained",
+			"passed": true
+		},
+		{
+			"id": "art.cover_slots_present",
+			"passed": true
+		},
+		{
+			"id": "tactics.selects_reachable_cover",
+			"passed": true
+		},
+		{
+			"id": "tactics.cover_occludes_threat",
+			"passed": true
+		},
+		{
+			"id": "tactics.reserves_cover",
+			"passed": true
+		},
+		{
+			"id": "tactics.releases_cover",
+			"passed": true
+		},
+		{
+			"id": "tactics.rear_outside_view",
+			"passed": true
+		},
+		{
+			"id": "tactics.front_inside_view",
+			"passed": true
+		},
+		{
+			"id": "tactics.no_fire_through_ally",
+			"passed": true
+		},
+		{
+			"id": "tactics.clear_fire_lane",
+			"passed": true
+		},
+		{
+			"id": "tactics.gunshot_investigation",
+			"passed": true
+		},
+		{
+			"id": "tactics.nearby_squad_alert",
+			"passed": true
+		},
+		{
+			"id": "tactics.reload_is_timed",
+			"passed": true
+		},
+		{
+			"id": "tactics.reload_refills",
+			"passed": true
+		},
+		{
+			"id": "tactics.no_damage_through_wall",
+			"passed": true
+		},
+		{
+			"id": "tactics.memory_not_wallhack",
+			"passed": true
+		},
+		{
+			"id": "cinematic.automatic_return",
+			"passed": true
+		},
+		{
+			"id": "cinematic.outro_before_results",
+			"passed": true
+		},
+		{
+			"id": "cinematic.outro_ends_won",
+			"passed": true
+		}
+	],
+	"engine": {
+		"build": "custom_build",
+		"hash": "unknown",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (custom_build)",
+		"timestamp": 0
+	},
+	"failure_count": 0,
+	"status": "PASS"
+}

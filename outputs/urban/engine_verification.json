@@ -201,7 +201,7 @@
 		"timestamp": 0
 	},
 	"failure_count": 0,
-	"static_batches": 12,
-	"static_instances": 643,
+	"static_batches": 14,
+	"static_instances": 1178,
 	"status": "PASS"
 }

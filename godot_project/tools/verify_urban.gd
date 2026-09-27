@@ -28,6 +28,8 @@ func _run() -> void:
 		push_error("Urban suite watchdog expired")
 		quit(1))
 	mission = load("res://scenes/urban_operation.tscn").instantiate()
+	mission.cinematics_enabled = false
+	mission.persistence_enabled = false
 	root.add_child(mission)
 	await frames()
 	var p = mission.player
@@ -161,6 +163,8 @@ func _run() -> void:
 	mission.queue_free()
 	await frames()
 	mission = load("res://scenes/urban_operation.tscn").instantiate()
+	mission.cinematics_enabled = false
+	mission.persistence_enabled = false
 	root.add_child(mission)
 	await frames()
 	check("restart.fresh_story",mission.stage == 0 and not mission.rescued and mission.remaining == 3)
@@ -179,6 +183,7 @@ func _run() -> void:
 	var live_enemy = mission.enemies[0]
 	live_enemy.global_position = Vector3(1000,.1,996)
 	live_enemy.home = live_enemy.global_position
+	live_enemy.look_at(Vector3(1000,.1,1000))
 	live_enemy.set_physics_process(true)
 	await frames(50)
 	check("urban_ai.acquisition_delay",mission.player.health == 100)

@@ -10,8 +10,11 @@ config_version=5
 
 [application]
 
-config/name="SWAT 3D Shooter"
-config/description="Original first-person urban story slice. Assets authored in Blender."
+config/use_custom_user_dir=true
+config/custom_user_dir_name="SectorNine"
+
+config/name="第九辖区：寂静港口"
+config/description="原创第一人称城市营救关卡：中文剧情、配音与可跳过过场。"
 run/main_scene="res://scenes/urban_operation.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"

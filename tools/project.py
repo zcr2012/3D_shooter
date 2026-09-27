@@ -7,6 +7,7 @@ This tool never downloads binaries, invokes a shell, or rewrites the v08 baselin
 import argparse
 import glob
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -43,7 +44,25 @@ def executable(name):
 
 def run(args):
     print('>', subprocess.list2cmdline([str(a) for a in args]), flush=True)
-    subprocess.run([str(a) for a in args], cwd=ROOT, check=True)
+    try:
+        result = subprocess.run([str(a) for a in args], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=240)
+        output = result.stdout + result.stderr
+        failed = result.returncode != 0 or 'SCRIPT ERROR:' in output or '\nERROR:' in output
+    except subprocess.TimeoutExpired as error:
+        output = (error.stdout or b'').decode('utf-8', errors='replace') + (error.stderr or b'').decode('utf-8', errors='replace')
+        output += '\nCommand exceeded 240 seconds.'
+        failed = True
+    print(output, flush=True)
+    if failed:
+        if os.environ.get('GITHUB_ACTIONS'):
+            clean = re.sub(r'\x1b\[[0-9;]*m', '', output)
+            lines = clean.splitlines()
+            selected = [line for line in lines if any(tag in line for tag in ['ERROR', 'Error', ' at:', 'GDScript', '[FAIL]', 'exceeded'])]
+            diagnostic = '\n'.join(selected) if selected else clean[-3000:]
+            for start in range(0, len(diagnostic), 2500):
+                detail = diagnostic[start:start+2500].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                print('::error::' + detail, flush=True)
+        raise SystemExit(1)
 
 
 def godot(*args):
@@ -64,7 +83,7 @@ def main(argv=None):
         godot()
     elif options.command == 'verify':
         godot('--headless', '--editor', '--import')
-        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd']:
+        for suite in ['verify_production_motion.gd', 'verify_gameplay.gd', 'verify_urban.gd', 'verify_chapter_zh.gd', 'verify_session.gd']:
             godot('--headless', '--script', 'res://tools/' + suite)
         destination = ROOT / 'outputs/v09/motion_verification.json'
         destination.parent.mkdir(parents=True, exist_ok=True)
