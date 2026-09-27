@@ -63,6 +63,27 @@ class ProjectChecks(unittest.TestCase):
         self.assertTrue((ROOT / 'outputs/v08/swat_visual_v08.blend').is_file())
 
 
+    def test_no_inferred_type_from_untyped_member(self):
+        # Godot 4.6 rejects `var x := member...` when `member` has no static type
+        # (the session_store.gd:118 CI blocker). Follows `extends "res://..."` chains.
+        import re
+        root = ROOT / 'godot_project'
+
+        def untyped(path):
+            text = path.read_text(encoding='utf-8')
+            names = set(re.findall(r'^var (\w+)\s*(?:=(?!=).*)?$', text, re.M))
+            parent = re.search(r'^extends "res://(.+?)"', text, re.M)
+            return names | (untyped(root / parent.group(1)) if parent else set())
+
+        offenders = []
+        for path in root.rglob('*.gd'):
+            names = untyped(path)
+            for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+                match = re.match(r'\s*var \w+\s*:=\s*(\w+)\s*([.\[]|$)', line)
+                if match and match.group(1) in names:
+                    offenders.append(f'{path.relative_to(ROOT)}:{number}')
+        self.assertEqual(offenders, [])
+
     def test_urban_asset_integrity(self):
         fps = glb(ROOT / 'godot_project/assets/urban/fps_kit.glb')
         names = {n.get('name') for n in fps['nodes']}

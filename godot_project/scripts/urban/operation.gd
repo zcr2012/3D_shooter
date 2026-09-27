@@ -247,7 +247,7 @@ func _physics_process(delta: float) -> void:
 		witness_still = 0.0 if witness_moving else witness_still + delta
 		if witness_still > .6 and hostage.global_position.distance_to(player.global_position) < 6:
 			# Standing witness keeps an eye on the officer rather than staring at a wall.
-			var look := player.global_position - hostage.global_position
+			var look: Vector3 = player.global_position - hostage.global_position
 			hostage.rotation.y = lerp_angle(hostage.rotation.y,atan2(-look.x,-look.z),1.0-exp(-3.0*delta))
 		play_witness("Jog" if witness_still < .2 else "Idle")
 

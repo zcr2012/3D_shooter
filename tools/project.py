@@ -113,20 +113,30 @@ def main(argv=None):
     elif options.command == 'run':
         godot()
     elif options.command == 'verify':
-        # Run every suite even after a failure, so one CI round exposes all regressions.
+        # Run every suite even after a failure (except parse errors), so one CI round exposes all regressions.
         engine = executable('godot')
         failures = []
         failed, output = execute([engine, '--path', PROJECT, '--headless', '--editor', '--import'])
         if failed:
             failures.append('import')
             annotate('error', 'import', diagnostics(output))
+        parse_error = ''
         for suite in SUITES:
+            if parse_error:
+                # A GDScript parse error makes later suites hang until their watchdog
+                # (4 min each) and report the same cascade; stop and point at the cause.
+                print(f'SUITE {suite}: SKIPPED after parse error', flush=True)
+                failures.append(suite)
+                continue
             failed, output = execute([engine, '--path', PROJECT, '--headless', '--script', 'res://tools/' + suite])
             line = summary(output) or ('no summary line' if failed else 'completed')
             print(f'SUITE {suite}: {"FAIL" if failed else "PASS"} {line}', flush=True)
             if failed:
                 failures.append(suite)
                 annotate('error', suite, (line + '\n' + diagnostics(output)).strip())
+                found = re.search(r'Parse Error: .*|at: GDScript::reload \(res://[^)]+\)', output)
+                if 'Parse Error' in output and found:
+                    parse_error = found.group(0)
             else:
                 annotate('notice', suite, 'PASS ' + line)
         motion = ROOT / 'outputs/production_motion_verification.json'
