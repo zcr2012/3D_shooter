@@ -17,6 +17,7 @@ var decision_time := 0.0
 var has_visual := false
 var _clock := 0.0
 var stuck_time := 0.0
+var search_yaw := 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -87,7 +88,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		_alert_time = 0
 		if tactical_state == "engage":
-			tactical_state = "search"
+			_enter_search()
 	velocity.x = 0
 	velocity.z = 0
 	if _react_time > 0:
@@ -100,7 +101,10 @@ func _physics_process(delta: float) -> void:
 			_play("ReloadArmed")
 		elif reload_time <= 0:
 			rounds = 5
-			tactical_state = "engage" if has_visual else "search"
+			if has_visual:
+				tactical_state = "engage"
+			else:
+				_enter_search()
 		_settle(delta)
 		return
 	match tactical_state:
@@ -115,8 +119,10 @@ func _physics_process(delta: float) -> void:
 				if tactical_state == "relocate":
 					tactical_state = "cover"
 					cover_wait = .85
+				elif has_visual:
+					tactical_state = "engage"
 				else:
-					tactical_state = "engage" if has_visual else "search"
+					_enter_search()
 		"cover":
 			_face(last_seen)
 			_play("AimArmed")
@@ -137,8 +143,17 @@ func _physics_process(delta: float) -> void:
 				decision_time = 4
 				_choose_cover()
 		"search":
-			_play("AimArmed")
-			_face(last_seen)
+			# Lost contact: walk to the last confirmed position if it is reachable,
+			# then sweep the sector instead of freezing; last_seen is never updated
+			# by memory so wall-hack shots stay impossible.
+			if not move_path.is_empty():
+				if _follow_path():
+					_play("WalkArmed")
+				else:
+					move_path.clear()
+			if move_path.is_empty():
+				_play("AimArmed")
+				rotation.y = search_yaw+sin(_clock*1.15)*.42
 			if search_time <= 0:
 				tactical_state = "patrol"
 				home = global_position
@@ -151,15 +166,21 @@ func _settle(delta: float) -> void:
 	velocity.y -= 9.8*delta
 	move_and_slide()
 	var travelled := Vector2(global_position.x-before.x,global_position.z-before.z).length()
-	if tactical_state in ["relocate","peek","investigate"] and desired > .1 and travelled < desired*delta*.15:
+	if tactical_state in ["relocate","peek","investigate","search"] and desired > .1 and travelled < desired*delta*.15:
 		stuck_time += delta
 	else:
 		stuck_time = 0
 	if stuck_time > 1.2:
 		move_path.clear()
 		release_cover()
-		tactical_state = "search"
+		_enter_search(false)
 		stuck_time = 0
+
+func _enter_search(plan_path := true) -> void:
+	tactical_state = "search"
+	search_yaw = rotation.y
+	if plan_path:
+		_plan_to(last_seen)
 
 func _face(where: Vector3) -> void:
 	var point := Vector3(where.x,global_position.y,where.z)
@@ -216,8 +237,8 @@ func _plan_peek() -> void:
 		if _clear_line(destination,last_seen+Vector3.UP*1.4) and _plan_to(destination):
 			tactical_state = "peek"
 			return
-	tactical_state = "search"
 	release_cover()
+	_enter_search()
 
 func release_cover() -> void:
 	if is_instance_valid(squad) and squad.cover_claims.get(cover_slot,0) == get_instance_id():
