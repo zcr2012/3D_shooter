@@ -1,0 +1,25 @@
+{
+  "asset": "fabric_pattern_07",
+  "creator": "Poly Haven",
+  "source_url": "https://polyhaven.com/a/fabric_pattern_07",
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "downloaded": "2026-09-27",
+  "files": [
+    {
+      "file": "third_party/polyhaven/fabric_pattern_07_col_1_1k.jpg",
+      "sha256": "aeb7a1487b77aec55e39de662def4d371f5c7c617f62d1f291d7f9932ffebdc9",
+      "mirror_url": "https://github.com/godotengine/godot-demo-projects/blob/15d4fcd70a429dfd455d6fce9d0cd004abd07373/3d/soft_body_physics/textures/polyhaven/fabric_pattern_07_col_1_1k.jpg"
+    },
+    {
+      "file": "third_party/polyhaven/fabric_pattern_07_arm_1k.jpg",
+      "sha256": "57520f1383a41ea9d69a3f9c1d2a2b0cdc6ba85c579935c44a1281845ec11030",
+      "mirror_url": "https://github.com/godotengine/godot-demo-projects/blob/15d4fcd70a429dfd455d6fce9d0cd004abd07373/3d/soft_body_physics/textures/polyhaven/fabric_pattern_07_arm_1k.jpg"
+    },
+    {
+      "file": "third_party/polyhaven/fabric_pattern_07_nor_gl_1k.jpg",
+      "sha256": "f6955bbdead9f023f2357f6f8808ed49627d10882cd2a3cb6b5a5ace155abc45",
+      "mirror_url": "https://github.com/godotengine/godot-demo-projects/blob/15d4fcd70a429dfd455d6fce9d0cd004abd07373/3d/soft_body_physics/textures/polyhaven/fabric_pattern_07_nor_gl_1k.jpg"
+    }
+  ]
+}

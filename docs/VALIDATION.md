@@ -1,3 +1,5 @@
+> 这是上一轮 v09 的历史记录。后续 PR #1 已合并，用户确认 Windows 试玩成功、旧轮 CI 通过。新城市首关的实际结果和仍未验收项见 [URBAN_VALIDATION.md](URBAN_VALIDATION.md)。
+
 # v09 验证记录 · 2026-09-26
 
 ## 本轮实际执行
