@@ -47,8 +47,8 @@
 - 共 19 段对白（第一章 8 段未改；第二章 6 段；第三章 5 段），三种声音均为**本会话由用户挑选的 AI 合成语音**
   （`voice-00` 指挥中心、`voice-01` 陈默、`voice-02` 沈国栋），不是真人演员录音。
 - 单一来源：`scripts/build_dialogue_manifest.py` 同时生成 `data/zh_dialogue.json` 与
-  `assets/audio/zh/manifest.json`（时长、SHA-256、章节、声音）。`pier_hold` 一句文本已进游戏、音频待合成
-  （manifest 中 `status: pending-synthesis`），游戏里按字数计时显示字幕，`chapter_audio.speak()` 先用
+  `assets/audio/zh/manifest.json`（时长、SHA-256、章节、声音）。19 段全部有音频；若将来某段音频缺失，
+  manifest 会标 `status: pending-synthesis`，游戏里按字数计时显示字幕，`chapter_audio.speak()` 先用
   `ResourceLoader.exists()` 判断，缺文件不报错。
 - 所有新增界面与场景文字仍通过 `scripts/check_chinese_font.py` 的字库覆盖检查（579 字，0 缺失）。
 

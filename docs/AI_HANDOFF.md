@@ -72,8 +72,7 @@
   `restore_checkpoint()` 拒绝他章存档，`continue_checkpoint()` 会经 `Campaign.open_chapter(tree, chapter, true)` 跳章后恢复。
   HUD/回车：结算按回车 `next_chapter()`；第三章结算显示 `epilogue` 五行。
 - 对白：`scripts/build_dialogue_manifest.py` 是 19 段对白与 manifest 的唯一来源；三种 AI 合成声音（voice-00/01/02）。
-  **`pier_hold.mp3` 尚未合成**（本会话单轮生成上限），manifest 标 `pending-synthesis`，游戏按字数计时显示字幕。
-  下一步：用 voice-00 合成该句（文本见剧本第三章阶段 1）、重跑 manifest 脚本、引擎 `--editor --import` 生成 `.import`。
+  19 段全部已合成并入库（`pier_hold` 在推送前补齐）。新增/重生成音频后：重跑 manifest 脚本、引擎 `--editor --import` 生成 `.import`。
 - 验证：新增 `tools/verify_campaign.gd`（已加入 `tools/project.py` SUITES 与 CI 产物）；`capture_chapter.gd` 扩到 23 帧
   （CI grep 已改为 `CAPTURE: 23 frames`）。第一章五套件在重构后应保持原通过数（urban 71 / session 95 / chapter_zh 33 /
   gameplay 31 / motion 374）；本地无头引擎结果记录在 `docs/CHAPTER_ZH_VALIDATION.md`。

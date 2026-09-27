@@ -174,10 +174,9 @@
       "chapter": 3,
       "voice": "voice-00",
       "text": "岸吊区安全，接应组跟进到你身后。热成像看到船尾有两个人在解缆，他们想提前走。林舟，别等零点了，现在就上舷梯。",
-      "file": null,
-      "seconds": null,
-      "sha256": null,
-      "status": "pending-synthesis"
+      "file": "godot_project/assets/audio/zh/pier_hold.mp3",
+      "seconds": 15.726,
+      "sha256": "cc6f730f93ac6c670c076c9cc70f68087eb698dd1d965edcb59aac292732ff90"
     },
     {
       "id": "pier_terminal",
