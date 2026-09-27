@@ -11,6 +11,20 @@
 - 不能将合成配音/程序音效说成专业演员棚录，不能以无头测试代替画面、听审或用户硬件帧率验收。
 - 用户曾对较早 Windows 试玩版反馈良好，但没有验收最新暂停/存档版本。
 
+## 2026-09-27 第二批交接（arena/01a0e133-3d-shooter 会话追加）
+
+本地已提交顺序：`ff2aeee` 纹理统一 → `7da6028` HUD 面板 → `e8043de` 枪械/店面/仓库陈设 → 战术 AI 搜索移动 + 文档（见下）。
+- `ff2aeee`、`7da6028` 的 GitHub Actions（win+linux 五套回归、导出、11 张 preview 截图）在提交时确认为全绿。
+- `e8043de` 与随后的 AI 批次：推送/查询过程中沙箱 GitHub token 失效（~05:50），
+  **下一位接手时第一步就是查看这些提交的 CI 与 preview 截图**，重点核对：
+  ① 枪械新部件朝向/尺寸；② 六间店面与集装箱外观及 batch 预算检查（`city.static_batch_budget` ≤16）；
+  ③ verify_session 护送全程仍不卡（新钢货架为实体障碍，托盘与店面纯视觉）；④ 敌人 search 扫视没有新报错。
+  若 `static_batch_budget` 超支，可把 wood 并入调色板既有键或合并门店材质。
+- 本沙箱 GH token 失效后只能用 api.github.com 之外无凭据；重新连接后 `git push origin arena/01a0e133-3d-shooter` 即可（本地提交见 git log）。
+- Blender 环境：`/tmp/blendenv`(bpy 4.5.0) + `/tmp/stubs` 空桩 .so + `LD_LIBRARY_PATH=/tmp/stubs`，`/tmp/blender_loader.py <script>` 运行；
+  换环境后需重建。fps_kit 内嵌贴图 md5 == .import generator_parameters（已用 RGB 像素 md5 验证），可以放心改几何不动贴图。
+- 仍未做：真人 Windows 试玩验收、配音听审、更多剧情/过场/配音扩展（配音生成管线见 build_chapter_audio.py，注意是否需要联网 TTS）。
+
 ## 本次交接的实际状态（2026-09-27 更新）
 - 分支 `arena/01a0e0e4-3d-shooter` 已修复原 CI 阻断（`session_store.gd:118` 类型推断），并继续修复后续暴露的问题。
 - 最新 CI（官方 Godot 4.6.3，Windows + Linux）五套引擎回归共 573 项检查通过：session 88、chapter_zh 33、urban 47、

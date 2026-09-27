@@ -66,8 +66,13 @@ class ProjectChecks(unittest.TestCase):
     def test_no_inferred_type_from_untyped_member(self):
         # Godot 4.6 rejects `var x := member...` when `member` has no static type
         # (the session_store.gd:118 CI blocker). Follows `extends "res://..."` chains.
+        # BoxMesh/CylinderMesh.material is statically Material, so assigning
+        # `:= ... .material.albedo_color` (StandardMaterial3D-only members) also
+        # fails to infer — that class broke CI on city_map.gd:179 (batch tinting).
         import re
         root = ROOT / 'godot_project'
+        standard_only = {'albedo_color', 'albedo_texture', 'vertex_color_use_as_albedo',
+                         'roughness', 'metallic', 'emission_enabled', 'emission', 'uv1_triplanar'}
 
         def untyped(path):
             text = path.read_text(encoding='utf-8')
@@ -81,6 +86,9 @@ class ProjectChecks(unittest.TestCase):
             for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
                 match = re.match(r'\s*var \w+\s*:=\s*(\w+)\s*([.\[]|$)', line)
                 if match and match.group(1) in names:
+                    offenders.append(f'{path.relative_to(ROOT)}:{number}')
+                material_match = re.search(r'var \w+\s*:=.*\.material\.(\w+)', line)
+                if material_match and material_match.group(1) in standard_only:
                     offenders.append(f'{path.relative_to(ROOT)}:{number}')
         self.assertEqual(offenders, [])
 
@@ -123,6 +131,27 @@ class ProjectChecks(unittest.TestCase):
         for item in manifest['files']:
             self.assertEqual(item['sha256'], hashlib.sha256((ROOT / item['file']).read_bytes()).hexdigest())
             self.assertIn('godotengine/godot-demo-projects/blob/', item['mirror_url'])
+
+    def test_texture_imports_unified_vram(self):
+        # docs/TEXTURE_IMPORT.md：gl_compatibility 桌面纹理统一 VRAM 压缩（S3TC），
+        # 与编辑器 update_imports() 自动改写的终态一致，防止打开编辑器反复产生改动。
+        # icon.svg 是 2D/UI 贴图、wav 的 compress/mode 语义不同，均不在本约束内。
+        import re
+        problems = []
+        for path in (ROOT / 'godot_project').rglob('*.png.import'):
+            rel = path.relative_to(ROOT)
+            text = path.read_text(encoding='utf-8')
+            for snippet in ['compress/mode=2', '\npath.s3tc="res://.godot/imported/',
+                            '"imported_formats": ["s3tc_bptc"]', '"vram_texture": true']:
+                if snippet not in text:
+                    problems.append(f'{rel}: 缺少 {snippet.strip()[:36]}')
+            if '\npath="res://.godot/imported/' in text:
+                problems.append(f'{rel}: 仍存在未压缩的 path= 条目')
+            if not re.search(r'(?m)^mipmaps/generate=true$', text):
+                problems.append(f'{rel}: 3D 贴图必须生成 mipmaps')
+            if not re.search(r'(?m)^detect_3d/compress_to=0$', text):
+                problems.append(f'{rel}: detect_3d/compress_to 必须为 0（一次性关闭自动改写）')
+        self.assertEqual(problems, [])
 
     def test_invalid_engine_path_fails_early(self):
         with patch.dict('os.environ', {'GODOT_BIN': str(ROOT / 'missing executable.exe')}):

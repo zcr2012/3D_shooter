@@ -88,6 +88,9 @@ func _ready() -> void:
 	sign_at("接应区",Vector3(-2,1.2,54),42)
 	sign_at("默瑟街",Vector3(-8,3.2,36),30)
 	_art_pass()
+	_storefronts()
+	_warehouse_furnish()
+	_containers()
 	_flush()
 	_flush_wheels()
 	rebuild_navigation()
@@ -121,7 +124,7 @@ func material(key: String) -> StandardMaterial3D:
 	if materials.has(key):
 		return materials[key]
 	var m := StandardMaterial3D.new()
-	var palette := {"steel":"3c484b","glass":"344f59","paint":"bcb8a5","lamp":"f5dfb3","hazard":"be803c","crate":"4c625d","screen":"73c9ac","extraction":"3c7971","trim":"777d76","rubber":"242a2d"}
+	var palette := {"steel":"3c484b","glass":"344f59","paint":"bcb8a5","lamp":"f5dfb3","hazard":"be803c","crate":"4c625d","screen":"73c9ac","extraction":"3c7971","trim":"777d76","rubber":"242a2d","wood":"7a6248"}
 	m.albedo_color = Color(palette.get(key,"ffffff"))
 	m.roughness = .83
 	if key in ["concrete","asphalt","plaster"]:
@@ -161,20 +164,25 @@ func _flush() -> void:
 	for key in batches:
 		var mesh := BoxMesh.new()
 		mesh.size = Vector3.ONE
-		mesh.material = material(key)
+		var city_material := material(key)
+		mesh.material = city_material
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		# Per-instance tint varies facades without adding draw calls (iGPU budget).
 		var tinted: bool = batch_tints[key].any(func(c: Color) -> bool: return c != Color.WHITE)
 		mm.use_colors = tinted
 		if tinted:
-			mesh.material.vertex_color_use_as_albedo = true
+			city_material.vertex_color_use_as_albedo = true
 		mm.mesh = mesh
 		mm.instance_count = batches[key].size()
+		# Instance colour replaces albedo when tinted: fall back to the palette
+		# colour for plain instances so older blocks keep their authored look.
+		var base := city_material.albedo_color if tinted else Color.WHITE
 		for i in mm.instance_count:
 			mm.set_instance_transform(i,batches[key][i])
 			if tinted:
-				mm.set_instance_color(i,batch_tints[key][i])
+				var c: Color = batch_tints[key][i]
+				mm.set_instance_color(i,base if c == Color.WHITE else c)
 		var node := MultiMeshInstance3D.new()
 		node.name = "CityBatch_" + key
 		node.multimesh = mm
@@ -333,6 +341,70 @@ func _art_pass() -> void:
 	var board := sign_at("停电时间：05:12\n封锁指令：05:06",Vector3(-2,2.45,13.25),22)
 	board.modulate = Color("e5c28b")
 
+func _storefronts() -> void:
+	# Street-level shops on the facades facing the road (skip z=-52 hidden behind
+	# the warehouse frontage). Doors/glazing are proud of the wall: no nav impact.
+	var boards := {-1.0:{-22.0:"五金工具店",10.0:"劳保鞋服",42.0:"骑手驿站"},1.0:{-22.0:"渔具绳网",10.0:"清晨豆浆铺",42.0:"货运收货处"}}
+	for side in [-1.0,1.0]:
+		for zc in [ -22.0,10.0,42.0]:
+			var tint := Color("a85c4c") if (side < 0) == (zc < 0) else Color("5c7a8a")
+			block(Vector3(side*11.9,1.15,zc),Vector3(.1,2.3,1.15),"crate",false,Color("20262a"))
+			for dz in [-1.75,1.75]:
+				block(Vector3(side*11.92,1.2,zc+dz),Vector3(.07,2.15,1.6),"glass",false)
+				block(Vector3(side*11.99,.92,zc+dz),Vector3(.75,.95,.9),"crate",false,Color("6b5d43"))
+			block(Vector3(side*11.86,2.5,zc),Vector3(.16,.28,4.9),"steel",false)
+			block(Vector3(side*11.5,2.9,zc),Vector3(1.0,.1,4.6),"trim",false,tint)
+			block(Vector3(side*11.06,2.84,zc),Vector3(.08,.18,4.6),"trim",false,tint)
+			block(Vector3(side*11.96,2.62,zc),Vector3(.05,.07,4.2),"lamp",false)
+			block(Vector3(side*11.3,.06,zc),Vector3(1.5,.12,4.8),"concrete",false)
+			for dz in [-2.3,2.3]:
+				block(Vector3(side*11.88,1.3,zc+dz),Vector3(.14,2.6,.14),"steel",false)
+			var board := sign_at(boards[side][zc],Vector3(side*11.58,3.14,zc),30)
+			board.rotation.y = -side*PI/2
+			board.modulate = Color("ffd9a0")
+
+func _warehouse_furnish() -> void:
+	# Steel shelf racks hug the west wall; the escort corridor (|x| < 2.6) stays clear.
+	for zc in [-44.0,-53.0]:
+		for dz in [-1.1,1.1]:
+			for dx in [-.3,.3]:
+				block(Vector3(-8.35+dx,1.6,zc+dz),Vector3(.09,3.2,.09),"steel",true)
+		for y in [.5,1.45,2.4]:
+			block(Vector3(-8.35,y,zc),Vector3(.78,.06,2.4),"steel",true)
+			block(Vector3(-8.35,y+.24,zc-.62),Vector3(.62,.42,.9),"wood",false,Color("9a8a70"))
+			block(Vector3(-8.4,y+.2,zc+.72),Vector3(.55,.36,.85),"crate",false,Color("556a78"))
+	# Wood pallets: stringers and a slat deck, non-solid so the escort path is untouched.
+	for p in [Vector3(7.45,0,-41.5),Vector3(7.45,0,-44.8),Vector3(-7.3,0,-39.8),Vector3(3.4,0,-59.2)]:
+		for dz in [-.45,0.0,.45]:
+			block(p+Vector3(0,.05,dz),Vector3(1.25,.1,.16),"wood",false,Color("6e5b3f"))
+		for dx in [-.5,-.17,.17,.5]:
+			block(p+Vector3(dx,.145,0),Vector3(.24,.09,1.05),"wood",false,Color("7d684a"))
+	for p in [Vector3(7.45,0,-41.5),Vector3(3.4,0,-59.2)]:
+		block(p+Vector3(0,.53,0),Vector3(1.0,.68,.85),"crate",false,Color("6b5d43"))
+		block(p+Vector3(0,.55,.46),Vector3(1.02,.12,.04),"trim",false)
+
+func _containers() -> void:
+	# Curbside shipping containers frame the boulevard; both stay clear of the escort lane.
+	for unit in [{"p":Vector3(8.35,0,-24),"c":"5f7a6e","s":-1.0},{"p":Vector3(-8.3,0,30),"c":"6e6a55","s":1.0}]:
+		var p: Vector3 = unit.p
+		var tint := Color(unit.c)
+		var face: float = unit.s
+		block(p+Vector3(0,1.3,0),Vector3(2.4,2.6,6.0),"crate",true,tint)
+		for dz in range(-2,3):
+			for side in [-1.0,1.0]:
+				block(p+Vector3(side*1.22,1.3,dz*.9),Vector3(.05,2.55,.16),"steel",false,tint.darkened(.25))
+			block(p+Vector3(0,2.63,dz*.9),Vector3(2.42,.05,.16),"steel",false,tint.darkened(.25))
+		for dz in [-2.95,2.95]:
+			for side in [-1.0,1.0]:
+				block(p+Vector3(side*1.24,1.3,dz),Vector3(.14,2.6,.14),"steel",false,tint.darkened(.35))
+		for dx in [-.62,.62]:
+			block(p+Vector3(dx,1.3,3.02),Vector3(1.1,2.5,.06),"crate",false,tint.darkened(.12))
+			block(p+Vector3(dx*.5,1.25,3.06),Vector3(.05,.55,.05),"trim",false)
+		block(p+Vector3(face*1.26,1.7,-1.4),Vector3(.04,.5,.72),"hazard",false)
+		var placard := sign_at("北湾联运　／　CN 20437",p+Vector3(face*1.28,1.05,.4),16)
+		placard.rotation.y = face*PI/2
+		placard.modulate = Color("e8dbb9")
+
 func _flush_wheels() -> void:
 	for rim in [false,true]:
 		var cylinder := CylinderMesh.new()
@@ -341,13 +413,20 @@ func _flush_wheels() -> void:
 		cylinder.height = .245 if rim else .22
 		cylinder.radial_segments = 12
 		cylinder.rings = 1
-		cylinder.material = material("trim" if rim else "rubber")
+		var wheel_material := material("trim" if rim else "rubber")
+		cylinder.material = wheel_material
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = cylinder
+		if wheel_material.vertex_color_use_as_albedo:
+			# The cylinder shares its material with tinted box batches; keep the
+			# authored palette colour instead of rendering vertex-colour white.
+			mm.use_colors = true
 		mm.instance_count = wheel_positions.size()
 		for i in wheel_positions.size():
 			mm.set_instance_transform(i,Transform3D(Basis(Vector3.FORWARD,PI/2),wheel_positions[i]))
+			if mm.use_colors:
+				mm.set_instance_color(i,wheel_material.albedo_color)
 		var node := MultiMeshInstance3D.new()
 		node.multimesh = mm
 		node.name = "WheelRims" if rim else "WheelTires"

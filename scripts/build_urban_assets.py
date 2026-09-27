@@ -61,10 +61,41 @@ parts.append(box('Front sight',(x,.79,-.064),(.012,.024,.069),steel,.002))
 parts.append(box('Front sight insert',(x,.785,-.026),(.005,.008,.01),mat('Sight phosphor',(.64,.85,.66)),.001))
 parts.append(box('Ejection port',(x+.046,.48,-.155),(.005,.084,.03),rubber))
 for y in [.41,.56]:parts.append(rod('Receiver pin',(x+.04,y,-.185),(x+.05,y,-.185),.006,edge,8))
+# Second-generation furniture pass: narrow controls and furniture silhouette.
+# All parts stay under the Weapon empty so the joined mesh keeps one transform.
+# Second-generation furniture pass; bevel=0 keeps the audit under 6000 triangles.
+parts.append(box('Charging handle spine',(x,.285,-.101),(.014,.075,.028),steel,0))
+parts.append(box('Charging handle latch',(x+.024,.252,-.101),(.024,.016,.026),steel,0))
+parts.append(box('Trigger',(x,.472,-.228),(.011,.05,.017),steel,0))
+parts.append(box('Bolt release paddle',(x-.044,.518,-.158),(.005,.048,.02),edge,0))
+parts.append(box('Brass deflector',(x+.048,.428,-.146),(.006,.028,.024),edge,0))
+parts.append(rod('Selector drum',(x-.041,.463,-.25),(x-.053,.463,-.25),.013,edge,6))
+parts.append(box('Selector lever',(x-.054,.447,-.256),(.006,.032,.011),edge,0))
+parts.append(box('Rail spine',(x,.855,-.1015),(.05,.315,.011),edge,0))
+for y in [.825,.88,.935,.99]:
+ parts.append(box('Rail tooth forward',(x,y,-.093),(.05,.014,.012),edge,0))
+parts.append(box('Gas block',(x,.906,-.127),(.042,.052,.028),steel,0))
+parts.append(rod('Gas tube',(x,.795,-.112),(x,.90,-.112),.0055,steel,8))
+for z in [-.135,-.165]:
+ parts.append(box('Muzzle port',(x,.972,z),(.05,.012,.018),rubber,0))
+parts.append(rod('Vertical foregrip',(x,.63,-.212),(x,.668,-.268),.0165,rubber,10,.013))
+parts.append(box('Foregrip collar',(x,.665,-.207),(.036,.04,.024),edge,0))
+for side in [-1,1]:
+ for y in [.63,.70,.77]:parts.append(box('Handguard slot',(x+side*.0385,y,-.19),(.0035,.032,.012),rubber,0))
+ parts.append(box('Sling slot',(x+side*.036,.225,-.205),(.006,.014,.05),steel,0))
+parts.append(box('Cheek riser',(x,.305,-.1075),(.054,.135,.024),rubber,.006))
+parts.append(box('Recoil pad',(x,.167,-.17),(.07,.018,.115),rubber,.006))
 parent_objs('Weapon',parts)
 mag=box('Magazine',(x,.52,-.29),(.054,.089,.17),steel)
 for y in [.49,.52,.55]:
  o=box('Magazine channel',(x+.029,y,-.29),(.004,.006,.13),rubber,.001);o.parent=mag;o.matrix_parent_inverse=mag.matrix_world.inverted()
+# Curved-look furniture on the magazine travels with the reload animation.
+for o in [box('Magazine baseplate',(x,.52,-.378),(.063,.102,.015),rubber,0),
+ box('Magazine toe',(x,.575,-.372),(.063,.028,.02),rubber,0),
+ box('Magazine feed lips',(x,.52,-.199),(.042,.07,.01),edge,0),
+ box('Magazine window left',(x-.0282,.53,-.315),(.0035,.052,.086),rubber,0),
+ box('Magazine window right',(x+.0282,.53,-.315),(.0035,.052,.086),rubber,0)]:
+ o.parent=mag;o.matrix_parent_inverse=mag.matrix_world.inverted()
 for side,palm,start in [('Right',(x,.38,-.25),(.32,.04,-.43)),('Left',(x-.035,.70,-.21),(-.27,.05,-.43))]:
  palm=Vector(palm);start=Vector(start);wrist=start.lerp(palm,.79);objects=[]
  objects.append(rod(side+' sleeve',start,wrist,.078,cloth,16,.048))

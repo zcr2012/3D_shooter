@@ -43,19 +43,35 @@ func _draw() -> void:
 		_center(hint,505,15,TEAL)
 	if not p._look_enabled:
 		_center("点击鼠标恢复视角控制",588,14,TEAL)
+	# Escort/evidence status is collected into a single dark panel under the info
+	# box: fixed-slot lines were unreadable over sunlit facades and could crowd
+	# the centered notice.
+	var status := PackedStringArray()
 	if mission.rescued:
-		_text("陈默距你 %d 米" % int(p.global_position.distance_to(mission.hostage.global_position)),Vector2(48,149),13,TEAL)
+		status.append("陈默距你 %d 米" % int(p.global_position.distance_to(mission.hostage.global_position)))
 	if mission.evidence_secured:
-		_text("证据：运输记录副本",Vector2(48,173),13,TEAL)
+		status.append("证据：运输记录副本")
 	if mission.rescued and (mission.escort_waiting or mission.escort_hold):
-		_text("陈默原地等候，按 H 跟随。" if mission.escort_hold else "陈默无法靠近，请回到通道内。",Vector2(48,197),13,TEAL)
+		status.append("陈默原地等候，按 H 跟随。" if mission.escort_hold else "陈默无法靠近，请回到通道内。")
+	if not status.is_empty():
+		var status_width := 0.0
+		for line in status:
+			status_width = maxf(status_width,_font.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,13).x)
+		var panel_height := 14.0 + status.size() * 20
+		draw_rect(Rect2(28,136,maxf(220,status_width+36),panel_height),BG)
+		draw_rect(Rect2(28,136,3,panel_height),TEAL)
+		for i in range(status.size()):
+			_text(status[i],Vector2(48,158+i*20),13,TEAL)
 	if mission.radio_time > 0 and mission.store.preferences.subtitles:
 		var subtitle_size := int(mission.store.preferences.subtitle_size)
 		var height := wrap_lines(mission.radio,675,subtitle_size).size()*(subtitle_size+7)+22
 		draw_rect(Rect2(290,670-height,710,height),BG)
 		_wrapped(mission.radio,Vector2(308,670-height+subtitle_size+8),675,subtitle_size,INK)
 	if notice_time > 0:
-		_center(notice,185,15,TEAL)
+		var notice_width := _font.get_string_size(notice,HORIZONTAL_ALIGNMENT_LEFT,-1,15).x
+		draw_rect(Rect2((1280-notice_width)/2-16,166,notice_width+32,30),BG)
+		draw_rect(Rect2((1280-notice_width)/2-16,166,3,30),TEAL)
+		_center(notice,187,15,TEAL)
 	_text("WASD 移动　Ctrl 蹲下　Shift 冲刺　右键瞄准　左键开火　R 换弹　E 交互　Tab 记录",Vector2(280,701),11,MUTED)
 	var center := Vector2(640,360)
 	if not Input.is_action_pressed("aim"):

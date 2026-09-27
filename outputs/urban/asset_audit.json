@@ -17,8 +17,8 @@
       "mesh_objects": 3
     },
     "fps_kit": {
-      "triangles": 5312,
-      "mesh_objects": 7
+      "triangles": 5948,
+      "mesh_objects": 12
     },
     "witness": {
       "triangles": 5304,
@@ -59,8 +59,8 @@
   "files": {
     "godot_project/assets/urban/contractor.glb": "7ff024094ddbbff004fad850896061936dea33182f47792dd8911f2a9ca5edf2",
     "outputs/urban/contractor.blend": "d859149f7d62b4575686a1fe329e144e2f0f64da328e29160294e03c6a49bab6",
-    "godot_project/assets/urban/fps_kit.glb": "516e021ac7f71b3e717091a05f09f7bd5fcab56a6f371948e81297617b90247c",
-    "outputs/urban/fps_kit.blend": "c87527f743efaa81fae859f4dcbcac39832e951a71a550b9cd7ebae4a299903c",
+    "godot_project/assets/urban/fps_kit.glb": "bc5af59520de29c382900561e202088287b97e43a07fced99abd99129b1a0d4f",
+    "outputs/urban/fps_kit.blend": "b7667912d1d280a42e4f0b05425e6fe9050f55fe24ec27f7afd7eae06a9f9e36",
     "godot_project/assets/urban/witness.glb": "0f237a6953ba1617da327e7b8b3a8835c354a6fb9ca9765c58e441afc99d1e7f",
     "outputs/urban/witness.blend": "202c2bc7907061b479df55876a4c0a35e3aca418a261ef5d12fa52cc5cb66fbd"
   },
