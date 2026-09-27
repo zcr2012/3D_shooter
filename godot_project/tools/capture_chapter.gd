@@ -90,7 +90,7 @@ func _run() -> void:
 	place_player(Vector3(0,.05,-40),0.0,-.05)
 	await capture("07_warehouse_interior")
 	# Kneeling, tied captive faces the warehouse door (+Z); frame the face and bound hands.
-	closeup(mission.hostage.global_position+Vector3(1.05,1.35,1.75),mission.hostage.global_position+Vector3(0,.95,0),40)
+	closeup(mission.hostage.global_position+Vector3(.55,.95,1.55),mission.hostage.global_position+Vector3(0,.88,0),42)
 	await capture("08_witness_closeup")
 	end_closeup()
 	await restore(3)
