@@ -115,6 +115,6 @@ func clear_checkpoint() -> void:
 	checkpoint.clear()
 	if persistent:
 		for suffix in ["",".bak",".tmp"]:
-			var path := directory+"checkpoint.json"+suffix
+			var path: String = directory + "checkpoint.json" + String(suffix)
 			if FileAccess.file_exists(path):
 				DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
