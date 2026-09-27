@@ -1,7 +1,7 @@
 {
   "font": "godot_project/assets/fonts/NotoSansCJKsc-Regular.otf",
   "font_sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
-  "checked_non_ascii_characters": 387,
+  "checked_non_ascii_characters": 423,
   "missing": [],
   "source_sha256": {
     "godot_project/scripts/game/enemy.gd": "76725c9f4179054c983f1ae44c20b11260c751eb821a7fcf30a1f52320ff5c6c",
@@ -9,12 +9,14 @@
     "godot_project/scripts/game/mission.gd": "9a454aa4421d526d748934948df448fc2b60c84b2dbe6fe2c3d57bedb1edee6b",
     "godot_project/scripts/player.gd": "f856e200a79a3c6e7e0d8ea3c47b43b61b20679d63e758c9d4c3a2f2689a8340",
     "godot_project/scripts/room_collision.gd": "f7ba4696f4dece691ebb78062f0e102ad6f9728c02a19f6c94f893e12037010d",
-    "godot_project/scripts/urban/chapter_audio.gd": "946aec290027c124cf47cfaf1f58a1a8a9e03f5a76a107b8fe5fca1c4badc46f",
-    "godot_project/scripts/urban/city_map.gd": "8b50e00a905505b3b201a963f7154b3527fbd0957c32becf9734aaf3a0fdc0d0",
+    "godot_project/scripts/urban/chapter_audio.gd": "3e4228c7c5d8fed432f2f4b1e54375255995535e38ddf5ddf3e6190189946cfd",
+    "godot_project/scripts/urban/city_map.gd": "1e2bbff136649dbac3e263efb205f2923e3eb52485ed6eb1098d680f87a8b4e0",
     "godot_project/scripts/urban/fps_player.gd": "3805dc6cab78674d570f022615bf58761122952a75bfcb324b9d5e1caa69af91",
-    "godot_project/scripts/urban/operation.gd": "97f67d11574d1bb3bb469b7258fc440dba8154b9b4b5945e618f7ffb428120d9",
+    "godot_project/scripts/urban/operation.gd": "934346136a837fda5aa6b191f96de3f491c937c7dddb13b8118b73120b3d60fd",
+    "godot_project/scripts/urban/session_menu.gd": "ca03fef3e26aadedb973b054109da83545518452db36922a59038627ca938e07",
+    "godot_project/scripts/urban/session_store.gd": "a1f59c294ab33aabfb67bd6b7a44c42301b36c26af4ce0672eab1f769533df11",
     "godot_project/scripts/urban/urban_enemy.gd": "2a75a76f3b8d5930e3d6acd2ef8ec371541ba7054c38af462b63df530a0797c4",
-    "godot_project/scripts/urban/urban_hud.gd": "21145c4c21e762acc0de5abc033d3f1872f9dbc5658bb5c285680d528c5e0304",
+    "godot_project/scripts/urban/urban_hud.gd": "9f2e702bc25dcb8a03b7d819ffb15764088c7a6c297a940f329ed35ee4d704f8",
     "godot_project/data/zh_dialogue.json": "f79b112710ce2f7033657c50222d6455cebad8a04141ce82f8badd6e16960aa4"
   }
 }

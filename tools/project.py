@@ -7,6 +7,7 @@ This tool never downloads binaries, invokes a shell, or rewrites the v08 baselin
 import argparse
 import glob
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -54,8 +55,13 @@ def run(args):
     print(output, flush=True)
     if failed:
         if os.environ.get('GITHUB_ACTIONS'):
-            detail = output[-18000:].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-            print('::error::' + detail, flush=True)
+            clean = re.sub(r'\x1b\[[0-9;]*m', '', output)
+            lines = clean.splitlines()
+            selected = [line for line in lines if any(tag in line for tag in ['ERROR', 'Error', ' at:', 'GDScript', '[FAIL]', 'exceeded'])]
+            diagnostic = '\n'.join(selected) if selected else clean[-3000:]
+            for start in range(0, len(diagnostic), 2500):
+                detail = diagnostic[start:start+2500].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                print('::error::' + detail, flush=True)
         raise SystemExit(1)
 
 
