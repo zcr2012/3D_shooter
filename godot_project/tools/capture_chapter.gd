@@ -89,12 +89,12 @@ func _run() -> void:
 	await restore(2)
 	place_player(Vector3(0,.05,-40),0.0,-.05)
 	await capture("07_warehouse_interior")
-	closeup(mission.hostage.global_position+Vector3(-1.1,1.6,1.9),mission.hostage.global_position+Vector3(0,1.3,0),38)
+	closeup(mission.hostage.global_position+Vector3(1.0,1.55,-1.9),mission.hostage.global_position+Vector3(0,1.3,0),38)
 	await capture("08_witness_closeup")
 	end_closeup()
 	await restore(3)
-	mission.hostage.global_position = Vector3(.6,.02,-24)
-	mission.hostage.rotation.y = PI
+	mission.hostage.global_position = Vector3(-.9,.02,-17.2)
+	mission.hostage.rotation.y = 0.35
 	mission.escort_hold = true
 	place_player(Vector3(0,.05,-20.5),PI,-.12)
 	await capture("09_escort")

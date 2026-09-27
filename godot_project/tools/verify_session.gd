@@ -161,9 +161,14 @@ func _run() -> void:
 	check("checkpoint.input_and_camera",mission.state == "active" and p.controls_enabled and p.cam.current)
 	check("checkpoint.single_player_instance",mission.get_children().filter(func(n): return n.has_signal("shot_fired") and not n.is_queued_for_deletion()).size() == 1)
 	freeze_enemies()
-	# Used supply at the warehouse must stay used after a retry.
-	p.global_position = Vector3(3,.05,-33)
+	# The street supply (index 0) was used before the checkpoint and must stay used after a retry;
+	# the unused warehouse supply (index 1) can be collected exactly once.
+	p.global_position = Vector3(3,.05,47)
 	check("checkpoint.used_supply_stays_used",not mission.try_resupply())
+	p.global_position = Vector3(3,.05,-33)
+	var reserve_before: int = p.reserve_ammo
+	check("checkpoint.unused_supply_collects_once",mission.try_resupply() and p.reserve_ammo == reserve_before + 60 and not mission.try_resupply())
+	mission.store.save_checkpoint(sample)
 	# Death -> lost -> Enter retries from the latest checkpoint with minimum resources.
 	p.take_damage(500)
 	await frames()

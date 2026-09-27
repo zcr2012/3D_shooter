@@ -1,6 +1,8 @@
 extends Node3D
 ## Static architecture is batched by material; collisions remain simple boxes.
 var batches: Dictionary = {}
+var batch_tints: Dictionary = {}
+var building_index := 0
 var cover_slots: Array[Vector3] = []
 var wheel_positions: Array[Vector3] = []
 var materials: Dictionary = {}
@@ -21,10 +23,16 @@ func _ready() -> void:
 			block(Vector3(side*9,2.8,z),Vector3(0.11,5.6,0.11),"steel",false)
 			block(Vector3(side*8.4,5.6,z),Vector3(1.3,0.1,0.2),"steel",false)
 			block(Vector3(side*8,5.5,z),Vector3(0.55,0.06,0.22),"lamp",false)
-	for z in range(-64,66,6):
+	# Street paint stops at the warehouse wall (z = -36); the interior gets a sealed concrete slab.
+	for z in range(-32,66,6):
 		block(Vector3(0,0.008,z),Vector3(0.13,0.01,2.6),"paint",false)
 	for x in [-7.5,7.5]:
-		block(Vector3(x,0.009,0),Vector3(0.1,0.01,130),"paint",false)
+		block(Vector3(x,0.009,15),Vector3(0.1,0.01,100),"paint",false)
+	block(Vector3(0,0.006,-49),Vector3(17.6,0.012,25.6),"concrete",false)
+	for z in [-39.0,-45.0,-51.0,-57.0]:
+		block(Vector3(0,0.013,z),Vector3(17.4,0.004,.06),"trim",false)
+	for x in [-7.6,7.6]:
+		block(Vector3(x,0.014,-49),Vector3(.12,0.004,25),"hazard",false)
 	for z in [-24,36]:
 		for x in range(-6,7,2):
 			block(Vector3(x,0.01,z),Vector3(1,0.02,3),"paint",false)
@@ -130,10 +138,12 @@ func material(key: String) -> StandardMaterial3D:
 	materials[key] = m
 	return m
 
-func block(pos: Vector3, size: Vector3, key: String, solid: bool) -> void:
+func block(pos: Vector3, size: Vector3, key: String, solid: bool, tint: Color = Color.WHITE) -> void:
 	if not batches.has(key):
 		batches[key] = []
+		batch_tints[key] = []
 	batches[key].append(Transform3D(Basis.from_scale(size),pos))
+	batch_tints[key].append(tint)
 	instance_count += 1
 	if solid:
 		if pos.y + size.y/2 > .3 and pos.y - size.y/2 < 1.6:
@@ -154,18 +164,31 @@ func _flush() -> void:
 		mesh.material = material(key)
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
+		# Per-instance tint varies facades without adding draw calls (iGPU budget).
+		var tinted: bool = batch_tints[key].any(func(c: Color) -> bool: return c != Color.WHITE)
+		mm.use_colors = tinted
+		if tinted:
+			mesh.material.vertex_color_use_as_albedo = true
 		mm.mesh = mesh
 		mm.instance_count = batches[key].size()
 		for i in mm.instance_count:
 			mm.set_instance_transform(i,batches[key][i])
+			if tinted:
+				mm.set_instance_color(i,batch_tints[key][i])
 		var node := MultiMeshInstance3D.new()
 		node.name = "CityBatch_" + key
 		node.multimesh = mm
 		add_child(node)
 	batches.clear()
+	batch_tints.clear()
+
+const FACADE_TINTS := [Color("f2e6cf"),Color("d6b89a"),Color("b9c2bb"),Color("c99a82"),Color("e0d7c3"),Color("a9b1b8"),Color("d8c29a"),Color("bfa895")]
 
 func building(pos: Vector3, size: Vector3) -> void:
-	block(pos+Vector3(0,size.y/2,0),size,"plaster",true)
+	# Deterministic per-block colour: weathered render, sandstone, grey-green, terracotta.
+	var tint: Color = FACADE_TINTS[(building_index*5)%FACADE_TINTS.size()]
+	building_index += 1
+	block(pos+Vector3(0,size.y/2,0),size,"plaster",true,tint)
 	for y in range(3,int(size.y),3):
 		block(pos+Vector3(0,y,0),Vector3(size.x+.18,.14,size.z+.18),"trim",false)
 		for z in range(-10,11,4):
