@@ -10,7 +10,7 @@
     "godot_project/scripts/player.gd": "f856e200a79a3c6e7e0d8ea3c47b43b61b20679d63e758c9d4c3a2f2689a8340",
     "godot_project/scripts/room_collision.gd": "f7ba4696f4dece691ebb78062f0e102ad6f9728c02a19f6c94f893e12037010d",
     "godot_project/scripts/urban/chapter_audio.gd": "3e4228c7c5d8fed432f2f4b1e54375255995535e38ddf5ddf3e6190189946cfd",
-    "godot_project/scripts/urban/city_map.gd": "9986fb9f054b9a6ac114621ab2c26ac873dae735e8ad07442e8eaff1025d2c66",
+    "godot_project/scripts/urban/city_map.gd": "19739cf5acbce200ce1b456d4396835976ba68ad8f15bf2c898666d3e8222125",
     "godot_project/scripts/urban/fps_player.gd": "3805dc6cab78674d570f022615bf58761122952a75bfcb324b9d5e1caa69af91",
     "godot_project/scripts/urban/operation.gd": "ef31fd8c82d3e8426d7d9b222871a3208a2a647333b1d1f7597a62ff9a20bf4b",
     "godot_project/scripts/urban/session_menu.gd": "58c8563f158762098ba373d38349097d7b1afff3cf449249e254a785f2dcc7ea",

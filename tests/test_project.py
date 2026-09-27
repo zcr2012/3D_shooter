@@ -66,8 +66,13 @@ class ProjectChecks(unittest.TestCase):
     def test_no_inferred_type_from_untyped_member(self):
         # Godot 4.6 rejects `var x := member...` when `member` has no static type
         # (the session_store.gd:118 CI blocker). Follows `extends "res://..."` chains.
+        # BoxMesh/CylinderMesh.material is statically Material, so assigning
+        # `:= ... .material.albedo_color` (StandardMaterial3D-only members) also
+        # fails to infer — that class broke CI on city_map.gd:179 (batch tinting).
         import re
         root = ROOT / 'godot_project'
+        standard_only = {'albedo_color', 'albedo_texture', 'vertex_color_use_as_albedo',
+                         'roughness', 'metallic', 'emission_enabled', 'emission', 'uv1_triplanar'}
 
         def untyped(path):
             text = path.read_text(encoding='utf-8')
@@ -81,6 +86,9 @@ class ProjectChecks(unittest.TestCase):
             for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
                 match = re.match(r'\s*var \w+\s*:=\s*(\w+)\s*([.\[]|$)', line)
                 if match and match.group(1) in names:
+                    offenders.append(f'{path.relative_to(ROOT)}:{number}')
+                material_match = re.search(r'var \w+\s*:=.*\.material\.(\w+)', line)
+                if material_match and material_match.group(1) in standard_only:
                     offenders.append(f'{path.relative_to(ROOT)}:{number}')
         self.assertEqual(offenders, [])
 

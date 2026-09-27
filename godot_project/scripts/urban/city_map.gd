@@ -164,19 +164,20 @@ func _flush() -> void:
 	for key in batches:
 		var mesh := BoxMesh.new()
 		mesh.size = Vector3.ONE
-		mesh.material = material(key)
+		var city_material := material(key)
+		mesh.material = city_material
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		# Per-instance tint varies facades without adding draw calls (iGPU budget).
 		var tinted: bool = batch_tints[key].any(func(c: Color) -> bool: return c != Color.WHITE)
 		mm.use_colors = tinted
 		if tinted:
-			mesh.material.vertex_color_use_as_albedo = true
+			city_material.vertex_color_use_as_albedo = true
 		mm.mesh = mesh
 		mm.instance_count = batches[key].size()
 		# Instance colour replaces albedo when tinted: fall back to the palette
 		# colour for plain instances so older blocks keep their authored look.
-		var base := mesh.material.albedo_color if tinted else Color.WHITE
+		var base := city_material.albedo_color if tinted else Color.WHITE
 		for i in mm.instance_count:
 			mm.set_instance_transform(i,batches[key][i])
 			if tinted:
@@ -412,11 +413,12 @@ func _flush_wheels() -> void:
 		cylinder.height = .245 if rim else .22
 		cylinder.radial_segments = 12
 		cylinder.rings = 1
-		cylinder.material = material("trim" if rim else "rubber")
+		var wheel_material := material("trim" if rim else "rubber")
+		cylinder.material = wheel_material
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = cylinder
-		if cylinder.material.vertex_color_use_as_albedo:
+		if wheel_material.vertex_color_use_as_albedo:
 			# The cylinder shares its material with tinted box batches; keep the
 			# authored palette colour instead of rendering vertex-colour white.
 			mm.use_colors = true
@@ -424,7 +426,7 @@ func _flush_wheels() -> void:
 		for i in wheel_positions.size():
 			mm.set_instance_transform(i,Transform3D(Basis(Vector3.FORWARD,PI/2),wheel_positions[i]))
 			if mm.use_colors:
-				mm.set_instance_color(i,cylinder.material.albedo_color)
+				mm.set_instance_color(i,wheel_material.albedo_color)
 		var node := MultiMeshInstance3D.new()
 		node.multimesh = mm
 		node.name = "WheelRims" if rim else "WheelTires"
